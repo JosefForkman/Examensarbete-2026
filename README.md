@@ -1,41 +1,41 @@
-# RSS & Podcast Reader (Examensarbete 2026)
+# RSS & Podcast Reader (Degree Project 2026)
 
-En modern, aggregerad plattform för att konsumera RSS-flöden och podcasts från YouTube Music och Spotify, byggd med fokus på prestanda och användarupplevelse.
+A modern, aggregated platform for consuming RSS feeds and podcasts from YouTube Music and Spotify, built with a focus on performance and user experience.
 
-## 🚀 Teknisk Stack
+## 🚀 Tech Stack
 
-- **Orkestrering:** [.NET Aspire](https://learn.microsoft.com/en-us/dotnet/aspire/)
-- **Backend:** .NET med [Hot Chocolate](https://chillicream.com/docs/hotchocolate) (GraphQL)
-- **Databas:** Entity Framework Core med SQLite
+- **Orchestration:** [.NET Aspire](https://learn.microsoft.com/en-us/dotnet/aspire/)
+- **Backend:** .NET with [Hot Chocolate](https://chillicream.com/docs/hotchocolate) (GraphQL)
+- **Database:** Entity Framework Core with SQLite
 - **Frontend:** Next.js 16+ (TypeScript) & [gql.tada](https://gql-tada.0no.co/)
 
-## ✨ Nyckelfunktioner
+## ✨ Key Features
 
-- **Aggregerad vy:** Hantera RSS-prenumerationer och podcasts från flera källor i ett och samma gränssnitt.
-- **Sök & Upptäck:** Global sökfunktion för att hitta innehåll i alla dina flöden.
-- **Integrationer:** Fullt stöd för Spotify och YouTube Music (sökning och befintliga prenumerationer).
-- **Bibliotek & Historik:** Spara favoriter, skapa spellistor och håll koll på vad du har läst eller lyssnat på.
+- **Aggregated View:** Manage RSS subscriptions and podcasts from multiple sources in a single interface.
+- **Search & Discover:** Global search functionality to find content across all your feeds.
+- **Integrations:** Full support for Spotify and YouTube Music (search and existing subscriptions).
+- **Library & History:** Save favorites, create playlists, and keep track of what you've read or listened to.
 
-## 🛠️ Arkitektur
+## 🛠️ Architecture
 
-Projektet använder en modern mikrotjänst-liknande arkitektur via **.NET Aspire**, vilket underlättar lokal utveckling, tjänsteupptäckt och deployment. Kommunikationen mellan frontend och backend sker via **GraphQL** för att minimera datatrafik och ge en typsäker utvecklingsupplevelse med **gql.tada**.
+The project utilizes a modern microservices-like architecture via **.NET Aspire**, facilitating local development, service discovery, and deployment. Communication between frontend and backend is handled via **GraphQL** to minimize data transfer and provide a type-safe development experience with **gql.tada**.
 
-## 🏗️ Kom igång
+## 🏗️ Getting Started
 
-### Förutsättningar
-- [.NET 8.0 SDK](https://dotnet.microsoft.com/download) eller senare
+### Prerequisites
+- [.NET 8.0 SDK](https://dotnet.microsoft.com/download) or later
 - [Node.js](https://nodejs.org/) (LTS)
 - [.NET Aspire workload](https://learn.microsoft.com/en-us/dotnet/aspire/fundamentals/setup-tooling)
 
 ### Installation
-1. Klona repot:
+1. Clone the repo:
    ```bash
-   git clone https://github.com/ditt-användarnamn/examensarbete-2026.git
+   git clone https://github.com/your-username/degree-project-2026.git
    ```
-2. Starta projektet med .NET Aspire:
+2. Run the project with .NET Aspire:
    ```bash
    dotnet run --project AspireApp.AppHost
    ```
 
 ---
-*Detta projekt utvecklas som ett examensarbete vid Campus Varberg 2026. På [Systemutvecklare .NET utbildningen](https://campus.varberg.se/yrkeshogskola/systemutvecklare-net) *
+*This project is developed as a degree project at Campus Varberg 2026, as part of the [.NET System Developer program](https://campus.varberg.se/yrkeshogskola/systemutvecklare-net).*

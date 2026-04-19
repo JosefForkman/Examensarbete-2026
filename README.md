@@ -30,12 +30,16 @@ The project utilizes a modern microservices-like architecture via **.NET Aspire*
 ### Installation
 1. Clone the repo:
    ```bash
-   git clone https://github.com/your-username/degree-project-2026.git
+   git clone https://github.com/JosefForkman/Examensarbete-2026.git
    ```
 2. Run the project with .NET Aspire:
    ```bash
    dotnet run --project AspireApp.AppHost
    ```
+
+## 👥 Contributors
+
+- **Josef** - *Developer and Designer* [GitHub Profile](https://github.com/JosefForkman)
 
 ---
 *This project is developed as a degree project at Campus Varberg 2026, as part of the [.NET System Developer program](https://campus.varberg.se/yrkeshogskola/systemutvecklare-net).*

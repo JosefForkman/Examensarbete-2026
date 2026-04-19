@@ -39,7 +39,8 @@ The project utilizes a modern microservices-like architecture via **.NET Aspire*
 
 ## 👥 Contributors
 
-- **Josef** - *Developer and Designer* [GitHub Profile](https://github.com/JosefForkman)
+- **Josef Forkman** - *Developer and Designer* [GitHub Profile](https://github.com/JosefForkman)
+- **Johan Svensson** - *Developer* [GitHub Profile](https://github.com/Darkdusk234)
 
 ---
 *This project is developed as a degree project at Campus Varberg 2026, as part of the [.NET System Developer program](https://campus.varberg.se/yrkeshogskola/systemutvecklare-net).*

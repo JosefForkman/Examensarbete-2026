@@ -1,0 +1,6 @@
+.next
+dist
+node_modules
+public/favicon.ico
+.cache
+package-lock.json

@@ -4,9 +4,9 @@ using Backend.Models;
 
 namespace Backend.Data
 {
-    public class DbContext : IdentityDbContext
+    public class RSSDbContext : IdentityDbContext
     {
-        public DbContext(DbContextOptions<DbContext> options) : base(options)
+        public RSSDbContext(DbContextOptions<RSSDbContext> options) : base(options)
         {
 
         }

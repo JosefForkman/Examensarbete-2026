@@ -3,10 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("mydb")
-    ?? throw new InvalidOperationException("Connection string 'mydb' not found.");
+var connectionString = "Host=localhost;Port=61154;Username=postgres;Password=_zYP0_-HY6CsZJX6tg_n(7;Database=mydb";
+    //builder.Configuration.GetConnectionString("mydb")
+    //?? throw new InvalidOperationException("Connection string 'mydb' not found.");
 
-builder.Services.AddDbContextFactory<Backend.Data.DbContext>(options =>
+builder.Services.AddDbContextFactory<Backend.Data.RSSDbContext>(options =>
     options.UseNpgsql(connectionString));
 
 builder.AddGraphQL().AddTypes();

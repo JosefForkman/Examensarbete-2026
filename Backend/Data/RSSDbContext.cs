@@ -6,18 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Data
 {
-<<<<<<< HEAD
     public class RSSDbContext(DbContextOptions<RSSDbContext> options) : IdentityDbContext<IdentityUser>(options)
     {
-=======
-    public class RSSDbContext : IdentityDbContext
-    {
-        public RSSDbContext(DbContextOptions<RSSDbContext> options) : base(options)
-        {
-
-        }
-
->>>>>>> 238ca78423f89ea5d956de1e0cad75b5a17528e5
         public DbSet<Website> Websites { get; set; } = null!;
         public DbSet<PostItem> PostItems { get; set; } = null!;
         public DbSet<Followed> Followed { get; set; } = null!;

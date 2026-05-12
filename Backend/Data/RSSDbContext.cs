@@ -1,16 +1,13 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
+﻿
 using Backend.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Data
 {
-    public class DbContext : IdentityDbContext
+    public class RSSDbContext(DbContextOptions<RSSDbContext> options) : IdentityDbContext<IdentityUser>(options)
     {
-        public DbContext(DbContextOptions<DbContext> options) : base(options)
-        {
-
-        }
-
         public DbSet<Website> Websites { get; set; } = null!;
         public DbSet<PostItem> PostItems { get; set; } = null!;
         public DbSet<Followed> Followed { get; set; } = null!;

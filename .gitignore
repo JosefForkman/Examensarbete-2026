@@ -1,0 +1,16 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/Examensarbete-2026/CopilotIndices/17.13.444.19527
+/.vs/Examensarbete-2026/FileContentIndex
+/.vs/Examensarbete-2026/v17/.wsuo
+/.vs/Examensarbete-2026/v17/DocumentLayout.json
+/.vs/slnx.sqlite
+/.vs/VSWorkspaceState.json
+/.vs/Examensarbete-2026/copilot-chat/878dec21/sessions
+/.vs/Examensarbete-2026/v17
+/.vs/Examensarbete-2026/solutionOpened
+/.vs
+/.vs/Examensarbete-2026/config
+/.github/copilot-instructions.md

@@ -24,9 +24,9 @@ public class GenericService<T>(RSSDbContext context) : IGenericService<T> where 
         }
     }
 
-    public async Task<IQueryable<T>> GetAllAsync()
+    public IQueryable<T> GetAll()
     {
-        return await _dbSet.AsNoTracking().ToListAsync().ContinueWith(task => task.Result.AsQueryable());
+        return _dbSet.AsNoTracking();
     }
 
     public async Task<T?> GetByIdAsync(int id)

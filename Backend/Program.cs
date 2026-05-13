@@ -3,9 +3,6 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// var connectionString = builder.Configuration.GetConnectionString("mydb")
-//     ?? throw new InvalidOperationException("Connection string 'mydb' not found.");
-
 builder.Services.AddDbContext<RSSDbContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("mydb")
@@ -20,6 +17,7 @@ builder.AddGraphQL().AddTypes();
 
 var app = builder.Build();
 
+// Apply pending migrations at startup
 if (app.Environment.IsDevelopment())
 {
     using var scope = app.Services.CreateScope();

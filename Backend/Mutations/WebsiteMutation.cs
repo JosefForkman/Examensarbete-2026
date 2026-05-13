@@ -1,8 +1,9 @@
 using System;
 using Backend.Models;
 using Backend.Service;
+using Backend.Types;
 
-namespace Backend.Types;
+namespace Backend.Mutations;
 
 [MutationType]
 public class WebsiteMutation

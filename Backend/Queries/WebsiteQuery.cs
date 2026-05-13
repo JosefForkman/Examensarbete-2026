@@ -1,7 +1,8 @@
 using Backend.Models;
 using Backend.Service;
+using Backend.Types;
 
-namespace Backend.Types;
+namespace Backend.Queries;
 
 [QueryType]
 public static class WebsiteQuery

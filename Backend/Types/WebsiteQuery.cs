@@ -4,7 +4,7 @@ using Backend.Service;
 namespace Backend.Types;
 
 [QueryType]
-public static class Query
+public static class WebsiteQuery
 {
     public static Book GetBook()
         => new Book("C# in depth.", new Author("Jon Skeet"));
@@ -22,5 +22,5 @@ public static class Query
             Url = website.SiteUrl
         });
     }
-
+    
 }

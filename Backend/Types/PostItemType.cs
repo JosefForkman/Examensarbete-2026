@@ -7,6 +7,6 @@
         public string Link { get; set; } = string.Empty;
         public string? ImageUrl { get; set; }
         public DateTime PublicationDate { get; set; }
-        public int WebsiteName { get; set; }
+        public string WebsiteName { get; set; } = string.Empty;
     }
 }

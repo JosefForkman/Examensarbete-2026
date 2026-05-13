@@ -6,7 +6,7 @@ namespace Backend.Types;
 [QueryType]
 public static class WebsiteQuery
 {
-    public static Book GetBook()
+    public static async Task<Book> GetBook()
         => new Book("C# in depth.", new Author("Jon Skeet"));
 
     [UsePaging]
@@ -22,5 +22,19 @@ public static class WebsiteQuery
             Url = website.SiteUrl
         });
     }
-    
+    public static async Task<WebsiteType?> GetWebsiteById(int id, IGenericService<Website> websiteService)
+    {
+        var website = await websiteService.GetByIdAsync(id);
+        if (website == null)
+        {
+            return null;
+        }
+
+        return new WebsiteType
+        {
+            Id = website.Id,
+            Name = website.SiteName,
+            Url = website.SiteUrl
+        };
+    }
 }

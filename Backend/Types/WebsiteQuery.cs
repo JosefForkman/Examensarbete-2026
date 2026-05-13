@@ -6,9 +6,6 @@ namespace Backend.Types;
 [QueryType]
 public static class WebsiteQuery
 {
-    public static async Task<Book> GetBook()
-        => new Book("C# in depth.", new Author("Jon Skeet"));
-
     [UsePaging]
     [UseProjection]
     [UseFiltering]

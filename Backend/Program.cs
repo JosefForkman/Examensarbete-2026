@@ -1,4 +1,6 @@
 using Backend.Data;
+using Backend.Models;
+using Backend.Service;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,9 +13,15 @@ builder.Services.AddDbContext<RSSDbContext>(options =>
     options.UseNpgsql(connectionString);
 });
 
+builder.Services.AddScoped(typeof(IGenericService<>), typeof(GenericService<>));
+
 builder.EnrichNpgsqlDbContext<RSSDbContext>();
 
-builder.AddGraphQL().AddTypes();
+builder.AddGraphQL()
+    .AddTypes()
+    .AddProjections()
+    .AddFiltering()
+    .AddSorting();
 
 var app = builder.Build();
 

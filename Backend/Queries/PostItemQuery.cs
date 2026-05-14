@@ -9,7 +9,7 @@ namespace Backend.Queries
     [QueryType]
     public static class PostItemQuery
     {
-        public static IQueryable<PostItemType> GetPostItems(PostItemService postItemService)
+        public static IQueryable<PostItemType> GetPostItems([Service] PostItemService postItemService)
         {
             return postItemService.GetAll()
                 .Select(p => new PostItemType

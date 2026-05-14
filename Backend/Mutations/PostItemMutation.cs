@@ -53,5 +53,41 @@ namespace Backend.Mutations
             await postItemService.DeleteAsync(id);
             return true;
         }
+
+        public async Task<UpdatePostItemPayload> UpdatePostItem(int id, UpdatePostItemInput input, [Service] PostItemService postItemService, [Service] WebsiteService websiteService)
+        {
+            var postItem = await postItemService.GetByIdAsync(id);
+
+            if (postItem == null)
+            {
+                throw new Exception($"Post item with ID '{id}' not found.");
+            }
+
+            var website = await websiteService.GetByUrlAsync(input.WebsiteUrl);
+
+            if (website == null)
+            {
+                throw new Exception($"Website with URL '{input.WebsiteUrl}' not found.");
+            }
+
+            postItem.Title = input.Title;
+            postItem.Description = input.Description;
+            postItem.Link = input.Link;
+            postItem.ImageUrl = input.ImageUrl;
+            postItem.PublicationDate = input.PublicationDate;
+            postItem.WebsiteId = website.Id;
+            var updatedPostItem = await postItemService.UpdateAsync(postItem);
+
+            return new UpdatePostItemPayload
+            {
+                Id = updatedPostItem.Id,
+                Title = updatedPostItem.Title,
+                Description = updatedPostItem.Description,
+                Link = updatedPostItem.Link,
+                ImageUrl = updatedPostItem.ImageUrl,
+                PublicationDate = updatedPostItem.PublicationDate,
+                WebsiteId = updatedPostItem.WebsiteId
+            };
+        }
     }
 }

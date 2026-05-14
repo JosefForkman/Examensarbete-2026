@@ -41,5 +41,17 @@ namespace Backend.Mutations
                 WebsiteId = createdPostItem.WebsiteId
             };
         }
+        public async Task<bool> DeletePostItem(int id, [Service] PostItemService postItemService)
+        {
+            var postItem = await postItemService.GetByIdAsync(id);
+
+            if (postItem == null)
+            {
+                throw new Exception($"Post item with ID '{id}' not found.");
+            }
+
+            await postItemService.DeleteAsync(id);
+            return true;
+        }
     }
 }

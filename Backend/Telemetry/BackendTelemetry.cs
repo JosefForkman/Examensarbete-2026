@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 namespace Backend.Telemetry;
+
 public static class BackendTelemetry
 {
     public const string ActivitySourceName = "Backend.EFCore";
@@ -86,7 +87,7 @@ public sealed class EfCoreTelemetryInterceptor : DbCommandInterceptor
         StopTelemetry(eventData.CommandId, success: true);
         return new(result);
     }
-    #pragma warning disable CS8765,CS8609
+#pragma warning disable CS8765, CS8609
     public override InterceptionResult<object> ScalarExecuting(
         DbCommand command,
         CommandEventData eventData,
@@ -118,7 +119,7 @@ public sealed class EfCoreTelemetryInterceptor : DbCommandInterceptor
         StopTelemetry(eventData.CommandId, success: true);
         return new(result);
     }
-    #pragma warning restore CS8765,CS8609
+#pragma warning restore CS8765, CS8609
 
     public override void CommandFailed(DbCommand command, CommandErrorEventData eventData)
     {
@@ -160,20 +161,23 @@ public sealed class EfCoreTelemetryInterceptor : DbCommandInterceptor
         {
             BackendTelemetry.CommandFailureCount.Add(1, tags);
         }
-        if (state.Activity is not null)
+
+        if (state.Activity is null)
         {
-            if (success)
-            {
-                state.Activity.SetStatus(ActivityStatusCode.Ok);
-            }
-            else
-            {
-                state.Activity.SetStatus(ActivityStatusCode.Error, exception?.Message ?? "EF Core command failed");
-                state.Activity.SetTag("error.type", exception?.GetType().FullName);
-                state.Activity.SetTag("error.message", exception?.Message);
-            }
-            state.Activity.Stop();
+            return;
         }
+        
+        if (success)
+        {
+            state.Activity.SetStatus(ActivityStatusCode.Ok);
+        }
+        else
+        {
+            state.Activity.SetStatus(ActivityStatusCode.Error, exception?.Message ?? "EF Core command failed");
+            state.Activity.SetTag("error.type", exception?.GetType().FullName);
+            state.Activity.SetTag("error.message", exception?.Message);
+        }
+        state.Activity.Stop();
     }
     private static TagList CreateTags(string commandKind, bool success)
     {

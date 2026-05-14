@@ -7,7 +7,7 @@ namespace Backend.Mutations
     [MutationType]
     public class PostItemMutation
     {
-        public async Task<CreatePostItemPayload> CreatePostItem(CreatePostItemInput input, [Service] IGenericService<PostItem> postItemService, [Service] WebsiteService websiteService)
+        public async Task<CreatePostItemPayload> CreatePostItem(CreatePostItemInput input, [Service] PostItemService postItemService, [Service] WebsiteService websiteService)
         {
             var website = await websiteService.GetByUrlAsync(input.WebsiteUrl);
 

@@ -5,7 +5,6 @@ namespace Backend.Service;
 
 public class GenericService<T>(RSSDbContext context) : IGenericService<T> where T : class
 {
-    protected readonly RSSDbContext _context = context;
     protected readonly DbSet<T> _dbSet = context.Set<T>();
 
     public virtual async Task<T> CreateAsync(T entity)

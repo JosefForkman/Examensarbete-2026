@@ -5,16 +5,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Service
 {
-    public class PostItemService : GenericService<PostItem>
+    public class PostItemService(RSSDbContext context) : GenericService<PostItem>(context)
     {
-        public PostItemService(RSSDbContext context) : base(context)
-        {
-
-        }
+        private readonly RSSDbContext context = context;
 
         public override IQueryable<PostItem> GetAll()
         {
-            return _context.PostItems
+            return context.PostItems
                 .Include(postItem => postItem.Website);
         }
 

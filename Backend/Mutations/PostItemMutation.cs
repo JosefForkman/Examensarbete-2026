@@ -16,6 +16,8 @@ namespace Backend.Mutations
                 throw new Exception($"Website with URL '{input.WebsiteUrl}' not found.");
             }
 
+            // Add validation to Check if a post item with same title and publication date already exists for the website
+
             var postItem = new PostItem
             {
                 Title = input.Title,

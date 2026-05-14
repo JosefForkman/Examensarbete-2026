@@ -14,6 +14,7 @@ builder.Services.AddDbContext<RSSDbContext>(options =>
 });
 
 builder.Services.AddScoped(typeof(IGenericService<>), typeof(GenericService<>));
+builder.Services.AddScoped<PostItemService>();
 
 builder.EnrichNpgsqlDbContext<RSSDbContext>();
 

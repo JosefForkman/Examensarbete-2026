@@ -22,5 +22,23 @@ namespace Backend.Queries
                     WebsiteName = p.Website.SiteName
                 });
         }
+
+        public static async Task<PostItemType?> GetPostItemById(int id, [Service] PostItemService postItemService)
+        {
+            var postItem = await postItemService.GetByIdAsync(id);
+            if (postItem == null)
+            {
+                return null;
+            }
+            return new PostItemType
+            {
+                Title = postItem.Title,
+                Description = postItem.Description,
+                Link = postItem.Link,
+                ImageUrl = postItem.ImageUrl,
+                PublicationDate = postItem.PublicationDate,
+                WebsiteName = postItem.Website.SiteName
+            };
+        }
     }
 }

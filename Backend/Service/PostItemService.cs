@@ -18,9 +18,12 @@ namespace Backend.Service
                 .Include(postItem => postItem.Website);
         }
 
-        public override Task<PostItem?> GetByIdAsync(int id)
+        public async override Task<PostItem?> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return _context.PostItems
+                .Include(postItem => postItem.Website)
+                .SingleOrDefault(postItem => postItem.Id == id);
+                
         }
     }
 }

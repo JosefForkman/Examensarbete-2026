@@ -7,7 +7,7 @@
         public string Link { get; set; } = null!;
         public string? ImageUrl { get; set; }
         public DateTime PublicationDate { get; set; }
-        public string WebsiteName { get; set; } = null!;
+        public string WebsiteUrl { get; set; } = null!;
 
     }
 }

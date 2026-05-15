@@ -14,6 +14,7 @@ namespace Backend.Queries
             return postItemService.GetAll()
                 .Select(p => new PostItemType
                 {
+                    Id = p.Id,
                     Title = p.Title,
                     Description = p.Description,
                     Link = p.Link,
@@ -32,6 +33,7 @@ namespace Backend.Queries
             }
             return new PostItemType
             {
+                Id = postItem.Id,
                 Title = postItem.Title,
                 Description = postItem.Description,
                 Link = postItem.Link,

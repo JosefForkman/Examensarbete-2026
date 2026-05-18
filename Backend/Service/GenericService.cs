@@ -74,7 +74,6 @@ public class GenericService<T>(RSSDbContext context, IValidator<T> validator) : 
         await context.SaveChangesAsync(cancellationToken);
     }
 
-    [Error<NotFoundException>]
     public virtual async Task<T> GetByIdAsync(int id)
     {
         var entry = await _dbSet.FirstOrDefaultAsync(e => EF.Property<int>(e, "Id") == id);

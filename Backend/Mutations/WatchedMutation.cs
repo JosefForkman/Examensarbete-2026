@@ -24,5 +24,18 @@ namespace Backend.Mutations
                 UserId = createdWatched.UserId
             };
         }
+
+        public async Task<bool> DeleteWatched(int id, [Service] GenericService<Watched> watchedService)
+        {
+            var watched = await watchedService.GetByIdAsync(id);
+
+            if (watched == null)
+            {
+                throw new Exception($"Watched item with ID '{id}' not found.");
+            }
+
+            await watchedService.DeleteAsync(id);
+            return true;
+        }
     }
 }

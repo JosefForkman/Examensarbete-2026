@@ -1,7 +1,7 @@
 using System;
 using Backend.Models;
 using Backend.Service;
-using Backend.Types;
+using Backend.Types.Website;
 
 namespace Backend.Mutations;
 

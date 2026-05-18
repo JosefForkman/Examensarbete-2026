@@ -1,6 +1,6 @@
-﻿namespace Backend.Types
+﻿namespace Backend.Types.PostItem
 {
-    public class UpdatePostItemInput
+    public class CreatePostItemInput
     {
         public string Title { get; set; } = null!;
         public string? Description { get; set; }
@@ -8,5 +8,6 @@
         public string? ImageUrl { get; set; }
         public DateTime PublicationDate { get; set; }
         public string WebsiteUrl { get; set; } = null!;
+
     }
 }

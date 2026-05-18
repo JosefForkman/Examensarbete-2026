@@ -1,4 +1,4 @@
-﻿namespace Backend.Types
+﻿namespace Backend.Types.PostItem
 {
     public class UpdatePostItemPayload
     {

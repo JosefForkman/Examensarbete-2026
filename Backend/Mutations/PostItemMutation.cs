@@ -1,6 +1,6 @@
 ﻿using Backend.Models;
 using Backend.Service;
-using Backend.Types;
+using Backend.Types.PostItem;
 
 namespace Backend.Mutations
 {

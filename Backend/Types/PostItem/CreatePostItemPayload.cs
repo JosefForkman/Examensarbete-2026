@@ -1,6 +1,6 @@
-﻿namespace Backend.Types
+﻿namespace Backend.Types.PostItem
 {
-    public class PostItemType
+    public class CreatePostItemPayload
     {
         public int Id { get; set; }
         public string Title { get; set; } = string.Empty;
@@ -8,6 +8,6 @@
         public string Link { get; set; } = string.Empty;
         public string? ImageUrl { get; set; }
         public DateTime PublicationDate { get; set; }
-        public string WebsiteName { get; set; } = string.Empty;
+        public int WebsiteId { get; set; }
     }
 }

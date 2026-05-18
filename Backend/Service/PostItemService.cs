@@ -1,21 +1,23 @@
 ﻿using Backend.Data;
 using Backend.Models;
 using Backend.Types;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Service
 {
-    public class PostItemService(RSSDbContext context) : GenericService<PostItem>(context)
+    public class PostItemService(RSSDbContext context, IValidator<PostItem> validator)
+        : GenericService<PostItem>(context, validator)
     {
-        private readonly RSSDbContext context = context;
+        private readonly RSSDbContext _context = context;
 
         public override IQueryable<PostItem> GetAll()
         {
-            return context.PostItems
+            return _context.PostItems
                 .Include(postItem => postItem.Website);
         }
 
-        public override Task<PostItem?> GetByIdAsync(int id)
+        public override Task<PostItem> GetByIdAsync(int id)
         {
             throw new NotImplementedException();
         }

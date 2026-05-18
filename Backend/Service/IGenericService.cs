@@ -1,5 +1,3 @@
-using Backend.Exception;
-
 namespace Backend.Service;
 
 public interface IGenericService<T> where T : class

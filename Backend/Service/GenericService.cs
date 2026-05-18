@@ -76,7 +76,7 @@ public class GenericService<T>(RSSDbContext context, IValidator<T> validator) : 
 
     public virtual async Task<T> GetByIdAsync(int id)
     {
-        var entry = await _dbSet.FirstOrDefaultAsync(e => EF.Property<int>(e, "Id") == id);
+        var entry = await _dbSet.FirstOrDefaultAsync(databaseEntity => EF.Property<int>(databaseEntity, "Id") == id);
         if (entry is null)
         {
             throw new NotFoundException(typeof(T).Name, id);

@@ -14,5 +14,9 @@ namespace Backend.Models
         [Required]
         [Url]
         public string SiteUrl { get; set; } = string.Empty;
+
+        //Navigational properties
+        public ICollection<PostItem> PostItems { get; set; } = new List<PostItem>();
+        public ICollection<Followed> FollowedByUser { get; set; } = new List<Followed>();
     }
 }

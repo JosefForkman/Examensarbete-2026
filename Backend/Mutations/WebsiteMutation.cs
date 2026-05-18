@@ -1,4 +1,4 @@
-using System;
+using Backend.Exception;
 using Backend.Models;
 using Backend.Service;
 using Backend.Types;
@@ -8,7 +8,9 @@ namespace Backend.Mutations;
 [MutationType]
 public class WebsiteMutation
 {
-    public async Task<CreateWebsitePayload> CreateWebsite(CreateWebsiteInput input, [Service] IGenericService<Website> websiteService)
+    [Error<ValidationException>]
+    public async Task<CreateWebsitePayload> CreateWebsite(CreateWebsiteInput input,
+        [Service] IGenericService<Website> websiteService)
     {
         var website = new Website
         {

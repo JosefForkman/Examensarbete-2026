@@ -148,7 +148,7 @@ public sealed class EfCoreTelemetryInterceptor : DbCommandInterceptor
         _activeCommands[eventData.CommandId] = new TelemetryState(commandKind, Stopwatch.StartNew(), activity);
         BackendTelemetry.CommandCount.Add(1, CreateTags(commandKind, success: true));
     }
-    private void StopTelemetry(Guid commandId, bool success, Exception? exception = null)
+    private void StopTelemetry(Guid commandId, bool success, System.Exception? exception = null)
     {
         if (!_activeCommands.TryRemove(commandId, out var state))
         {

@@ -21,6 +21,8 @@ builder.Services.AddDbContext<RSSDbContext>((sp, options) =>
 builder.Services.AddSingleton<EfCoreTelemetryInterceptor>();
 builder.Services.AddScoped(typeof(IGenericService<>), typeof(GenericService<>));
 builder.Services.AddScoped<PostItemService>();
+builder.Services.AddScoped<WebsiteService>();
+
 builder.EnrichNpgsqlDbContext<RSSDbContext>();
 builder.AddGraphQL()
             .AddTypes()

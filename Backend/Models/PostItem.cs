@@ -17,5 +17,6 @@ namespace Backend.Models
 
         //Navigational properties
         public Website Website { get; set; } = null!;
+        public ICollection<Watched> WatchedByUser { get; set; } = new List<Watched>();
     }
 }

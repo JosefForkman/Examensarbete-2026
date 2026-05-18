@@ -1,4 +1,4 @@
-using System;
+using Backend.Exception;
 
 namespace Backend.Service;
 
@@ -16,26 +16,33 @@ public interface IGenericService<T> where T : class
     /// </summary>
     /// <param name="id">The entity ID.</param>
     /// <returns>The entity if found, otherwise null.</returns>
-    Task<T?> GetByIdAsync(int id);
+    Task<T> GetByIdAsync(int id);
 
     /// <summary>
     /// Creates and saves a new entity in the database.
     /// </summary>
     /// <param name="entity">The entity to create.</param>
+    /// <param name="cancellationToken">Allows the create operation to be canceled.</param>
     /// <returns>The created entity with an updated ID.</returns>
-    Task<T> CreateAsync(T entity);
+    [Error<ValidationException>]
+    Task<T> CreateAsync(T entity, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Updates an existing entity in the database.
     /// </summary>
     /// <param name="entity">The entity with updated values.</param>
+    /// <param name="cancellationToken">Allows the update operation to be canceled.</param>
     /// <returns>The updated entity.</returns>
-    Task<T> UpdateAsync(T entity);
+    [Error<ValidationException>]
+    [Error<NotFoundException>]
+    Task<T> UpdateAsync(T entity, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Deletes an entity from the database based on its ID.
     /// </summary>
     /// <param name="id">The ID of the entity to delete.</param>
+    /// <param name="cancellationToken">Allows the delete operation to be canceled.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    Task DeleteAsync(int id);
+    [Error<NotFoundException>]
+    Task DeleteAsync(int id, CancellationToken cancellationToken = default);
 }

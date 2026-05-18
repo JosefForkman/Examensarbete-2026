@@ -24,5 +24,18 @@ namespace Backend.Mutations
                 WebsiteId = createdFollowed.WebsiteId
             };
         }
+
+        public async Task<bool> DeleteFollowed(int id, [Service] GenericService<Followed> followedService)
+        {
+            var followed = await followedService.GetByIdAsync(id);
+
+            if (followed == null)
+            {
+                throw new Exception($"Followed item with ID '{id}' not found.");
+            }
+
+            await followedService.DeleteAsync(id);
+            return true;
+        }
     }
 }

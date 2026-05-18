@@ -7,6 +7,10 @@ namespace Backend.Queries
     [QueryType]
     public static class WatchedQuery
     {
+        [UsePaging]
+        [UseProjection]
+        [UseFiltering]
+        [UseSorting]
         public static IQueryable<WatchedType> GetWatchedItems([Service] GenericService<Watched> watchedService)
         {
             return watchedService.GetAll()

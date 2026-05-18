@@ -9,6 +9,10 @@ namespace Backend.Queries
     [QueryType]
     public static class PostItemQuery
     {
+        [UsePaging]
+        [UseProjection]
+        [UseFiltering]
+        [UseSorting]
         public static IQueryable<PostItemType> GetPostItems([Service] PostItemService postItemService)
         {
             return postItemService.GetAll()

@@ -17,5 +17,22 @@ namespace Backend.Queries
                     UserId = w.UserId
                 });
         }
+
+        public static async Task<WatchedType?> GetWatchedItemById(int id, [Service] GenericService<Watched> watchedService)
+        {
+            var watched = await watchedService.GetByIdAsync(id);
+
+            if (watched == null)
+            {
+                return null;
+            }
+
+            return new WatchedType
+            {
+                Id = watched.Id,
+                PostItemId = watched.PostItemId,
+                UserId = watched.UserId
+            };
+        }
     }
 }

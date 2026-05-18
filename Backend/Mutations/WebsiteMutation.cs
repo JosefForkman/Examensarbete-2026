@@ -39,4 +39,27 @@ public class WebsiteMutation
         await websiteService.DeleteAsync(id);
         return true;
     }
+
+    public async Task<UpdateWebsitePayload> UpdateWebsite(int id, UpdateWebsiteInput input, [Service] IGenericService<Website> websiteService)
+    {
+        var website = await websiteService.GetByIdAsync(id);
+
+        if (website == null)
+        {
+            throw new Exception($"Website with ID '{id}' not found.");
+        }
+
+        website.SiteName = input.SiteName;
+        website.RSSUrl = input.RSSUrl;
+        website.SiteUrl = input.SiteUrl;
+
+        var updatedWebsite = await websiteService.UpdateAsync(website);
+
+        return new UpdateWebsitePayload
+        {
+            Id = updatedWebsite.Id,
+            SiteName = updatedWebsite.SiteName,
+            SiteUrl = updatedWebsite.SiteUrl
+        };
+    }
 }

@@ -26,4 +26,17 @@ public class WebsiteMutation
             Url = createdWebsite.SiteUrl
         };
     }
+
+    public async Task<bool> DeleteWebsite(int id, [Service] IGenericService<Website> websiteService)
+    {
+        var website = await websiteService.GetByIdAsync(id);
+
+        if (website == null)
+        {
+            throw new Exception($"Website with ID '{id}' not found.");
+        }
+
+        await websiteService.DeleteAsync(id);
+        return true;
+    }
 }

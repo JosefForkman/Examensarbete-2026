@@ -1,4 +1,5 @@
 ﻿using Backend.Data;
+using Backend.Exception;
 using Backend.Models;
 using Backend.Types;
 using FluentValidation;
@@ -9,7 +10,6 @@ namespace Backend.Service
     public class PostItemService(RSSDbContext context, IValidator<PostItem> validator)
         : GenericService<PostItem>(context, validator)
     {
-        private readonly RSSDbContext _context = context;
 
         public override IQueryable<PostItem> GetAll()
         {
@@ -17,9 +17,18 @@ namespace Backend.Service
                 .Include(postItem => postItem.Website);
         }
 
-        public override Task<PostItem> GetByIdAsync(int id)
+        public async override Task<PostItem> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var postItem = await _context.PostItems
+                .Include(postItem => postItem.Website)
+                .SingleOrDefaultAsync(postItem => postItem.Id == id);
+
+            if (postItem == null)
+            {
+                throw new NotFoundException(nameof(PostItem), id);
+            }
+            
+            return postItem;
         }
     }
 }

@@ -5,19 +5,25 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Service
 {
-    public class PostItemService(RSSDbContext context) : GenericService<PostItem>(context)
+    public class PostItemService : GenericService<PostItem>
     {
-        private readonly RSSDbContext context = context;
+        public PostItemService(RSSDbContext context) : base(context)
+        {
+
+        }
 
         public override IQueryable<PostItem> GetAll()
         {
-            return context.PostItems
+            return _context.PostItems
                 .Include(postItem => postItem.Website);
         }
 
-        public override Task<PostItem?> GetByIdAsync(int id)
+        public async override Task<PostItem?> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return _context.PostItems
+                .Include(postItem => postItem.Website)
+                .SingleOrDefault(postItem => postItem.Id == id);
+                
         }
     }
 }

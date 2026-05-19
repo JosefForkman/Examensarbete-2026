@@ -13,7 +13,10 @@ public class WatchedValidation : AbstractValidator<Watched>
             RuleFor(watched => watched.PostItemId).GreaterThan(0);
         });
 
-        RuleSet("Update", () => { });
+        RuleSet("Update", () =>
+        {
+            RuleFor(watched => watched.UserId).NotEmpty();
+            RuleFor(watched => watched.PostItemId).GreaterThan(0);
+        });
     }
 }
-

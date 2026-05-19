@@ -36,11 +36,11 @@ public class WebsiteValidation : AbstractValidator<Website>
 
             RuleFor(website => website.SiteUrl)
                 .Must(uri => Uri.IsWellFormedUriString(uri, UriKind.Absolute))
-                .When(w => !string.IsNullOrEmpty(w.SiteUrl));
+                .When(website => !string.IsNullOrEmpty(website.SiteUrl));
 
             RuleFor(website => website.RSSUrl)
                 .Must(uri => Uri.IsWellFormedUriString(uri, UriKind.Absolute))
-                .When(w => !string.IsNullOrEmpty(w.RSSUrl));
+                .When(website => !string.IsNullOrEmpty(website.RSSUrl));
         });
     }
 }

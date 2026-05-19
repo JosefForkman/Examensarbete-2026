@@ -1,7 +1,7 @@
 using Backend.Exception;
 using Backend.Models;
 using Backend.Service;
-using Backend.Types;
+using Backend.Types.Website;
 
 namespace Backend.Mutations;
 
@@ -26,6 +26,42 @@ public class WebsiteMutation
             Id = createdWebsite.Id,
             Name = createdWebsite.SiteName,
             Url = createdWebsite.SiteUrl
+        };
+    }
+
+    public async Task<bool> DeleteWebsite(int id, [Service] IGenericService<Website> websiteService)
+    {
+        var website = await websiteService.GetByIdAsync(id);
+
+        if (website == null)
+        {
+            throw new System.Exception($"Website with ID '{id}' not found.");
+        }
+
+        await websiteService.DeleteAsync(id);
+        return true;
+    }
+
+    public async Task<UpdateWebsitePayload> UpdateWebsite(int id, UpdateWebsiteInput input, [Service] IGenericService<Website> websiteService)
+    {
+        var website = await websiteService.GetByIdAsync(id);
+
+        if (website == null)
+        {
+            throw new System.Exception($"Website with ID '{id}' not found.");
+        }
+
+        website.SiteName = input.SiteName;
+        website.RSSUrl = input.RSSUrl;
+        website.SiteUrl = input.SiteUrl;
+
+        var updatedWebsite = await websiteService.UpdateAsync(website);
+
+        return new UpdateWebsitePayload
+        {
+            Id = updatedWebsite.Id,
+            SiteName = updatedWebsite.SiteName,
+            SiteUrl = updatedWebsite.SiteUrl
         };
     }
 }

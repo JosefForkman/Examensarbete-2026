@@ -1,6 +1,8 @@
-namespace Backend.Types;
+using System;
 
-public class WebsiteType
+namespace Backend.Types.Website;
+
+public class CreateWebsitePayload
 {
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;

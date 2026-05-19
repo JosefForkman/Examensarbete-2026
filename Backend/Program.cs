@@ -10,17 +10,20 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddApplicationTelemetry();
 
 // Database configuration
-builder.Services.AddDbContext<RSSDbContext>((serviceProvider, options) =>
+builder.Services.AddDbContext<RSSDbContext>((sp, options) =>
 {
     var connectionString = builder.Configuration.GetConnectionString("mydb")
         ?? throw new InvalidOperationException("Connection string 'mydb' not found.");
-
     options.UseNpgsql(connectionString);
-    options.AddInterceptors(serviceProvider.GetRequiredService<EfCoreTelemetryInterceptor>());
+    options.AddInterceptors(sp.GetRequiredService<EfCoreTelemetryInterceptor>());
 });
 
+// Services
+builder.Services.AddSingleton<EfCoreTelemetryInterceptor>();
 builder.Services.AddScoped(typeof(IGenericService<>), typeof(GenericService<>));
 builder.Services.AddScoped<PostItemService>();
+builder.Services.AddScoped<WebsiteService>();
+
 builder.Services.AddScoped<EfCoreTelemetryInterceptor>();
 
 // Add FluentValidation Dependency
@@ -29,12 +32,13 @@ builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.EnrichNpgsqlDbContext<RSSDbContext>();
 
 builder.AddGraphQL()
-    .AddTypes()
-    .AddProjections()
-    .AddFiltering()
-    .AddSorting()
-    .AddQueryConventions()
-    .AddMutationConventions();
+            .AddTypes()
+            .AddProjections()
+            .AddFiltering()
+            .AddSorting()
+            .AddQueryConventions()
+            .AddMutationConventions()
+            .AddInstrumentation();
 
 var app = builder.Build();
 

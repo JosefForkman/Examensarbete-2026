@@ -9,6 +9,7 @@ namespace Backend.Service;
 
 public class GenericService<T>(RSSDbContext context, IValidator<T> validator) : IGenericService<T> where T : class
 {
+    protected readonly RSSDbContext _context = context;
     protected readonly DbSet<T> _dbSet = context.Set<T>();
     protected readonly IValidator<T> Validator = validator;
 

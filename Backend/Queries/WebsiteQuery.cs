@@ -1,7 +1,7 @@
 using Backend.Exception;
 using Backend.Models;
 using Backend.Service;
-using Backend.Types;
+using Backend.Types.Website;
 
 namespace Backend.Queries;
 

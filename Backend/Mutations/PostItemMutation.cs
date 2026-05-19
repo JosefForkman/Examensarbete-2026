@@ -13,7 +13,7 @@ namespace Backend.Mutations
 
             if (website == null)
             {
-                throw new Exception($"Website with URL '{input.WebsiteUrl}' not found.");
+                throw new System.Exception($"Website with URL '{input.WebsiteUrl}' not found.");
             }
 
             // Add validation to Check if a post item with same title and publication date already exists for the website
@@ -47,7 +47,7 @@ namespace Backend.Mutations
 
             if (postItem == null)
             {
-                throw new Exception($"Post item with ID '{id}' not found.");
+                throw new System.Exception($"Post item with ID '{id}' not found.");
             }
 
             await postItemService.DeleteAsync(id);
@@ -60,14 +60,14 @@ namespace Backend.Mutations
 
             if (postItem == null)
             {
-                throw new Exception($"Post item with ID '{id}' not found.");
+                throw new System.Exception($"Post item with ID '{id}' not found.");
             }
 
             var website = await websiteService.GetByUrlAsync(input.WebsiteUrl);
 
             if (website == null)
             {
-                throw new Exception($"Website with URL '{input.WebsiteUrl}' not found.");
+                throw new System.Exception($"Website with URL '{input.WebsiteUrl}' not found.");
             }
 
             postItem.Title = input.Title;

@@ -22,7 +22,8 @@ namespace Backend.Queries
                 });
         }
 
-        public static async Task<FollowedType?> GetFollowedItemById(int id, [Service] GenericService<Followed> followedService)
+        public static async Task<FollowedType?> GetFollowedItemById(int id,
+            [Service] GenericService<Followed> followedService)
         {
             var followed = await followedService.GetByIdAsync(id);
 
@@ -38,4 +39,5 @@ namespace Backend.Queries
                 WebsiteId = followed.WebsiteId
             };
         }
+    }
 }

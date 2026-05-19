@@ -1,3 +1,4 @@
+using Backend.Exception;
 using Backend.Models;
 using Backend.Service;
 using Backend.Types.Website;
@@ -20,6 +21,8 @@ public static class WebsiteQuery
             Url = website.SiteUrl
         });
     }
+    
+    [Error<NotFoundException>]
     public static async Task<WebsiteType?> GetWebsiteById(int id, IGenericService<Website> websiteService)
     {
         var website = await websiteService.GetByIdAsync(id);

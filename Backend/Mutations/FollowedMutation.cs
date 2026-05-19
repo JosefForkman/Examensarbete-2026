@@ -31,7 +31,7 @@ namespace Backend.Mutations
 
             if (followed == null)
             {
-                throw new Exception($"Followed item with ID '{id}' not found.");
+                throw new System.Exception($"Followed item with ID '{id}' not found.");
             }
 
             await followedService.DeleteAsync(id);
@@ -44,7 +44,7 @@ namespace Backend.Mutations
 
             if (followed == null)
             {
-                throw new Exception($"Followed item with ID '{id}' not found.");
+                throw new System.Exception($"Followed item with ID '{id}' not found.");
             }
 
             followed.UserId = input.UserId;

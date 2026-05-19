@@ -1,16 +1,15 @@
 ﻿using Backend.Data;
+using Backend.Exception;
 using Backend.Models;
 using Backend.Types;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Service
 {
-    public class PostItemService : GenericService<PostItem>
+    public class PostItemService(RSSDbContext context, IValidator<PostItem> validator)
+        : GenericService<PostItem>(context, validator)
     {
-        public PostItemService(RSSDbContext context) : base(context)
-        {
-
-        }
 
         public override IQueryable<PostItem> GetAll()
         {
@@ -18,12 +17,18 @@ namespace Backend.Service
                 .Include(postItem => postItem.Website);
         }
 
-        public async override Task<PostItem?> GetByIdAsync(int id)
+        public async override Task<PostItem> GetByIdAsync(int id)
         {
-            return _context.PostItems
+            var postItem = await _context.PostItems
                 .Include(postItem => postItem.Website)
-                .SingleOrDefault(postItem => postItem.Id == id);
-                
+                .SingleOrDefaultAsync(postItem => postItem.Id == id);
+
+            if (postItem == null)
+            {
+                throw new NotFoundException(nameof(PostItem), id);
+            }
+            
+            return postItem;
         }
     }
 }

@@ -31,7 +31,7 @@ namespace Backend.Mutations
 
             if (watched == null)
             {
-                throw new Exception($"Watched item with ID '{id}' not found.");
+                throw new System.Exception($"Watched item with ID '{id}' not found.");
             }
 
             await watchedService.DeleteAsync(id);
@@ -44,7 +44,7 @@ namespace Backend.Mutations
 
             if (watched == null)
             {
-                throw new Exception($"Watched item with ID '{id}' not found.");
+                throw new System.Exception($"Watched item with ID '{id}' not found.");
             }
 
             watched.PostItemId = input.PostItemId;

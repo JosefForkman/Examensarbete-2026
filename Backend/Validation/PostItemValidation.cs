@@ -22,6 +22,10 @@ public class PostItemValidation : AbstractValidator<PostItem>
             RuleFor(item => item.Title).MaximumLength(200).When(i => !string.IsNullOrEmpty(i.Title));
             RuleFor(item => item.Link).Must(uri => Uri.IsWellFormedUriString(uri, UriKind.Absolute))
                 .When(i => !string.IsNullOrEmpty(i.Link));
+            RuleFor(item => item.WebsiteId).GreaterThan(0);
+            RuleFor(item => item.ImageUrl)
+                .Must(uri => string.IsNullOrWhiteSpace(uri) || Uri.IsWellFormedUriString(uri, UriKind.Absolute))
+                .WithMessage("ImageUrl must be a valid absolute URL.");
         });
     }
 }

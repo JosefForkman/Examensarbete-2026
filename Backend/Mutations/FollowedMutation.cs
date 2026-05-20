@@ -1,14 +1,33 @@
-﻿using Backend.Models;
+﻿using Backend.Exception;
+using Backend.Models;
 using Backend.Service;
 using Backend.Types.Followed;
+using Microsoft.AspNetCore.Identity;
 
 namespace Backend.Mutations
 {
     [MutationType]
     public class FollowedMutation
     {
-        public async Task<CreateFollowedPayload> CreateFollowed(CreateFollowedInput input, [Service] GenericService<Followed> followedService)
+        [Error<NotFoundException>]
+        [Error<AggregateException>]
+        public async Task<CreateFollowedPayload> CreateFollowed(CreateFollowedInput input, [Service] GenericService<Followed> followedService,
+            [Service] UserService userService, [Service] GenericService<Website> websiteService)
         {
+            var existingUser = await userService.GetUserById(input.UserId);
+
+            if (existingUser == null)
+            {
+                throw new NotFoundException("User", input.UserId);
+            }
+
+            var existingWebsite = await websiteService.GetByIdAsync(input.WebsiteId);
+
+            if (existingWebsite == null)
+            {
+                throw new NotFoundException("Website", input.WebsiteId);
+            }
+
             var followed = new Followed
             {
                 UserId = input.UserId,
@@ -25,26 +44,45 @@ namespace Backend.Mutations
             };
         }
 
+        [Error<NotFoundException>]
+        [Error<InvalidOperationException>]
         public async Task<bool> DeleteFollowed(int id, [Service] GenericService<Followed> followedService)
         {
             var followed = await followedService.GetByIdAsync(id);
 
             if (followed == null)
             {
-                throw new System.Exception($"Followed item with ID '{id}' not found.");
+                throw new NotFoundException("Followed", id);
             }
 
             await followedService.DeleteAsync(id);
             return true;
         }
 
-        public async Task<UpdateFollowedPayload> UpdateFollowed(int id, UpdateFollowedInput input, [Service] GenericService<Followed> followedService)
+        [Error<NotFoundException>]
+        [Error<AggregateException>]
+        public async Task<UpdateFollowedPayload> UpdateFollowed(int id, UpdateFollowedInput input, [Service] GenericService<Followed> followedService,
+            [Service] UserService userService, [Service] GenericService<Website> websiteService)
         {
             var followed = await followedService.GetByIdAsync(id);
 
             if (followed == null)
             {
-                throw new System.Exception($"Followed item with ID '{id}' not found.");
+                throw new NotFoundException("Followed", id);
+            }
+
+            var existingUser = await userService.GetUserById(input.UserId);
+
+            if (existingUser == null)
+            {
+                throw new NotFoundException("User", input.UserId);
+            }
+
+            var existingWebsite = await websiteService.GetByIdAsync(input.WebsiteId);
+
+            if (existingWebsite == null)
+            {
+                throw new NotFoundException("Website", input.WebsiteId);
             }
 
             followed.UserId = input.UserId;

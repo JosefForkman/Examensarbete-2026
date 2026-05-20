@@ -8,7 +8,7 @@ namespace Backend.Mutations;
 [MutationType]
 public class WebsiteMutation
 {
-    [Error<ValidationException>]
+    [Error<AggregateException>]
     public async Task<CreateWebsitePayload> CreateWebsite(CreateWebsiteInput input,
         [Service] IGenericService<Website> websiteService)
     {
@@ -29,26 +29,30 @@ public class WebsiteMutation
         };
     }
 
+    [Error<NotFoundException>]
+    [Error<InvalidOperationException>]
     public async Task<bool> DeleteWebsite(int id, [Service] IGenericService<Website> websiteService)
     {
         var website = await websiteService.GetByIdAsync(id);
 
         if (website == null)
         {
-            throw new System.Exception($"Website with ID '{id}' not found.");
+            throw new NotFoundException("Website", id);
         }
 
         await websiteService.DeleteAsync(id);
         return true;
     }
 
+    [Error<NotFoundException>]
+    [Error<AggregateException>]
     public async Task<UpdateWebsitePayload> UpdateWebsite(int id, UpdateWebsiteInput input, [Service] IGenericService<Website> websiteService)
     {
         var website = await websiteService.GetByIdAsync(id);
 
         if (website == null)
         {
-            throw new System.Exception($"Website with ID '{id}' not found.");
+            throw new NotFoundException("Website", id);
         }
 
         website.SiteName = input.SiteName;

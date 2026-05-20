@@ -1,4 +1,5 @@
-﻿using Backend.Models;
+﻿using Backend.Exception;
+using Backend.Models;
 using Backend.Service;
 using Backend.Types.PostItem;
 
@@ -47,7 +48,7 @@ namespace Backend.Mutations
 
             if (postItem == null)
             {
-                throw new System.Exception($"Post item with ID '{id}' not found.");
+                throw new NotFoundException("PostItem", id);
             }
 
             await postItemService.DeleteAsync(id);
@@ -60,7 +61,7 @@ namespace Backend.Mutations
 
             if (postItem == null)
             {
-                throw new System.Exception($"Post item with ID '{id}' not found.");
+                throw new NotFoundException("PostItem", id);
             }
 
             var website = await websiteService.GetByUrlAsync(input.WebsiteUrl);

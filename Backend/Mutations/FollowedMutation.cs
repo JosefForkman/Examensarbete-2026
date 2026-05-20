@@ -1,4 +1,5 @@
-﻿using Backend.Models;
+﻿using Backend.Exception;
+using Backend.Models;
 using Backend.Service;
 using Backend.Types.Followed;
 using Microsoft.AspNetCore.Identity;
@@ -15,14 +16,14 @@ namespace Backend.Mutations
 
             if (existingUser == null)
             {
-                throw new System.Exception($"User with ID '{input.UserId}' not found.");
+                throw new NotFoundException("User", input.UserId);
             }
 
             var existingWebsite = await websiteService.GetByIdAsync(input.WebsiteId);
 
             if (existingWebsite == null)
             {
-                throw new System.Exception($"Website with ID '{input.WebsiteId}' not found.");
+                throw new NotFoundException("Website", input.WebsiteId);
             }
 
             var followed = new Followed
@@ -47,7 +48,7 @@ namespace Backend.Mutations
 
             if (followed == null)
             {
-                throw new System.Exception($"Followed item with ID '{id}' not found.");
+                throw new NotFoundException("Followed", id);
             }
 
             await followedService.DeleteAsync(id);
@@ -61,21 +62,21 @@ namespace Backend.Mutations
 
             if (followed == null)
             {
-                throw new System.Exception($"Followed item with ID '{id}' not found.");
+                throw new NotFoundException("Followed", id);
             }
 
             var existingUser = await userService.GetUserById(input.UserId);
 
             if (existingUser == null)
             {
-                throw new System.Exception($"User with ID '{input.UserId}' not found.");
+                throw new NotFoundException("User", input.UserId);
             }
 
             var existingWebsite = await websiteService.GetByIdAsync(input.WebsiteId);
 
             if (existingWebsite == null)
             {
-                throw new System.Exception($"Website with ID '{input.WebsiteId}' not found.");
+                throw new NotFoundException("Website", input.WebsiteId);
             }
 
             followed.UserId = input.UserId;

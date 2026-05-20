@@ -35,7 +35,7 @@ public class WebsiteMutation
 
         if (website == null)
         {
-            throw new System.Exception($"Website with ID '{id}' not found.");
+            throw new NotFoundException("Website", id);
         }
 
         await websiteService.DeleteAsync(id);
@@ -48,7 +48,7 @@ public class WebsiteMutation
 
         if (website == null)
         {
-            throw new System.Exception($"Website with ID '{id}' not found.");
+            throw new NotFoundException("Website", id);
         }
 
         website.SiteName = input.SiteName;

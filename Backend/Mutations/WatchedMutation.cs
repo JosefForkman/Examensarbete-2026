@@ -1,4 +1,5 @@
-﻿using Backend.Models;
+﻿using Backend.Exception;
+using Backend.Models;
 using Backend.Service;
 using Backend.Types.Watched;
 
@@ -14,14 +15,14 @@ namespace Backend.Mutations
 
             if (existingUser == null)
             {
-                throw new System.Exception($"User with ID '{input.UserId}' not found.");
+                throw new NotFoundException("User", input.UserId);
             }
 
             var existingPostItem = await postItemService.GetByIdAsync(input.PostItemId);
 
             if (existingPostItem == null)
             {
-                throw new System.Exception($"Post item with ID '{input.PostItemId}' not found.");
+                throw new NotFoundException("PostItem", input.PostItemId);
             }
 
             var watched = new Watched
@@ -46,7 +47,7 @@ namespace Backend.Mutations
 
             if (watched == null)
             {
-                throw new System.Exception($"Watched item with ID '{id}' not found.");
+                throw new NotFoundException("Watched", id);
             }
 
             await watchedService.DeleteAsync(id);
@@ -60,21 +61,21 @@ namespace Backend.Mutations
 
             if (watched == null)
             {
-                throw new System.Exception($"Watched item with ID '{id}' not found.");
+                throw new NotFoundException("Watched", id);
             }
 
             var existingUser = await userService.GetUserById(input.UserId);
 
             if (existingUser == null)
             {
-                throw new System.Exception($"User with ID '{input.UserId}' not found.");
+                throw new NotFoundException("User", input.UserId);
             }
 
             var existingPostItem = await websiteService.GetByIdAsync(input.PostItemId);
 
             if (existingPostItem == null)
             {
-                throw new System.Exception($"Post item with ID '{input.PostItemId}' not found.");
+                throw new NotFoundException("PostItem", input.PostItemId);
             }
 
             watched.PostItemId = input.PostItemId;

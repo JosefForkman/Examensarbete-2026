@@ -10,6 +10,7 @@ namespace Backend.Mutations
     {
         [Error<System.Exception>]
         [Error<NotFoundException>]
+        [Error<AggregateException>]
         public async Task<CreatePostItemPayload> CreatePostItem(CreatePostItemInput input, [Service] PostItemService postItemService, [Service] WebsiteService websiteService)
         {
             var website = await websiteService.GetByUrlAsync(input.WebsiteUrl);
@@ -46,6 +47,7 @@ namespace Backend.Mutations
         }
 
         [Error<NotFoundException>]
+        [Error<InvalidOperationException>]
         public async Task<bool> DeletePostItem(int id, [Service] PostItemService postItemService)
         {
             var postItem = await postItemService.GetByIdAsync(id);
@@ -61,6 +63,7 @@ namespace Backend.Mutations
 
         [Error<System.Exception>]
         [Error<NotFoundException>]
+        [Error<AggregateException>]
         public async Task<UpdatePostItemPayload> UpdatePostItem(int id, UpdatePostItemInput input, [Service] PostItemService postItemService, [Service] WebsiteService websiteService)
         {
             var postItem = await postItemService.GetByIdAsync(id);

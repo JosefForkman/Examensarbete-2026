@@ -8,6 +8,7 @@ namespace Backend.Mutations;
 [MutationType]
 public class WebsiteMutation
 {
+    [Error<AggregateException>]
     public async Task<CreateWebsitePayload> CreateWebsite(CreateWebsiteInput input,
         [Service] IGenericService<Website> websiteService)
     {
@@ -29,6 +30,7 @@ public class WebsiteMutation
     }
 
     [Error<NotFoundException>]
+    [Error<InvalidOperationException>]
     public async Task<bool> DeleteWebsite(int id, [Service] IGenericService<Website> websiteService)
     {
         var website = await websiteService.GetByIdAsync(id);
@@ -43,6 +45,7 @@ public class WebsiteMutation
     }
 
     [Error<NotFoundException>]
+    [Error<AggregateException>]
     public async Task<UpdateWebsitePayload> UpdateWebsite(int id, UpdateWebsiteInput input, [Service] IGenericService<Website> websiteService)
     {
         var website = await websiteService.GetByIdAsync(id);

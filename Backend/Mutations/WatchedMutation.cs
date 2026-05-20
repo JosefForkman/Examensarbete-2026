@@ -53,13 +53,28 @@ namespace Backend.Mutations
             return true;
         }
 
-        public async Task<UpdateWatchedPayload> UpdateWatched(int id, UpdateWatchedInput input, [Service] GenericService<Watched> watchedService)
+        public async Task<UpdateWatchedPayload> UpdateWatched(int id, UpdateWatchedInput input, [Service] GenericService<Watched> watchedService,
+            [Service] UserService userService, [Service] GenericService<Website> websiteService)
         {
             var watched = await watchedService.GetByIdAsync(id);
 
             if (watched == null)
             {
                 throw new System.Exception($"Watched item with ID '{id}' not found.");
+            }
+
+            var existingUser = await userService.GetUserById(input.UserId);
+
+            if (existingUser == null)
+            {
+                throw new System.Exception($"User with ID '{input.UserId}' not found.");
+            }
+
+            var existingPostItem = await websiteService.GetByIdAsync(input.PostItemId);
+
+            if (existingPostItem == null)
+            {
+                throw new System.Exception($"Post item with ID '{input.PostItemId}' not found.");
             }
 
             watched.PostItemId = input.PostItemId;

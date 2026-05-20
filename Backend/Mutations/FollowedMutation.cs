@@ -9,6 +9,7 @@ namespace Backend.Mutations
     [MutationType]
     public class FollowedMutation
     {
+        [Error<NotFoundException>]
         public async Task<CreateFollowedPayload> CreateFollowed(CreateFollowedInput input, [Service] GenericService<Followed> followedService,
             [Service] UserService userService, [Service] GenericService<Website> websiteService)
         {
@@ -42,6 +43,7 @@ namespace Backend.Mutations
             };
         }
 
+        [Error<NotFoundException>]
         public async Task<bool> DeleteFollowed(int id, [Service] GenericService<Followed> followedService)
         {
             var followed = await followedService.GetByIdAsync(id);
@@ -55,6 +57,7 @@ namespace Backend.Mutations
             return true;
         }
 
+        [Error<NotFoundException>]
         public async Task<UpdateFollowedPayload> UpdateFollowed(int id, UpdateFollowedInput input, [Service] GenericService<Followed> followedService,
             [Service] UserService userService, [Service] GenericService<Website> websiteService)
         {

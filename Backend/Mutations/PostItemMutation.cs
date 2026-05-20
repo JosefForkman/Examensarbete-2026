@@ -8,6 +8,8 @@ namespace Backend.Mutations
     [MutationType]
     public class PostItemMutation
     {
+        [Error<System.Exception>]
+        [Error<NotFoundException>]
         public async Task<CreatePostItemPayload> CreatePostItem(CreatePostItemInput input, [Service] PostItemService postItemService, [Service] WebsiteService websiteService)
         {
             var website = await websiteService.GetByUrlAsync(input.WebsiteUrl);
@@ -42,6 +44,8 @@ namespace Backend.Mutations
                 WebsiteId = createdPostItem.WebsiteId
             };
         }
+
+        [Error<NotFoundException>]
         public async Task<bool> DeletePostItem(int id, [Service] PostItemService postItemService)
         {
             var postItem = await postItemService.GetByIdAsync(id);
@@ -55,6 +59,8 @@ namespace Backend.Mutations
             return true;
         }
 
+        [Error<System.Exception>]
+        [Error<NotFoundException>]
         public async Task<UpdatePostItemPayload> UpdatePostItem(int id, UpdatePostItemInput input, [Service] PostItemService postItemService, [Service] WebsiteService websiteService)
         {
             var postItem = await postItemService.GetByIdAsync(id);

@@ -7,8 +7,23 @@ namespace Backend.Mutations
     [MutationType]
     public class WatchedMutation
     {
-        public async Task<CreateWatchedPayload> CreateWatched(CreateWatchedInput input, [Service] GenericService<Watched> watchedService)
+        public async Task<CreateWatchedPayload> CreateWatched(CreateWatchedInput input, [Service] GenericService<Watched> watchedService,
+            [Service] UserService userService, [Service] PostItemService postItemService)
         {
+            var existingUser = await userService.GetUserById(input.UserId);
+
+            if (existingUser == null)
+            {
+                throw new System.Exception($"User with ID '{input.UserId}' not found.");
+            }
+
+            var existingPostItem = await postItemService.GetByIdAsync(input.PostItemId);
+
+            if (existingPostItem == null)
+            {
+                throw new System.Exception($"Post item with ID '{input.PostItemId}' not found.");
+            }
+
             var watched = new Watched
             {
                 PostItemId = input.PostItemId,

@@ -1,14 +1,30 @@
 ﻿using Backend.Models;
 using Backend.Service;
 using Backend.Types.Followed;
+using Microsoft.AspNetCore.Identity;
 
 namespace Backend.Mutations
 {
     [MutationType]
     public class FollowedMutation
     {
-        public async Task<CreateFollowedPayload> CreateFollowed(CreateFollowedInput input, [Service] GenericService<Followed> followedService)
+        public async Task<CreateFollowedPayload> CreateFollowed(CreateFollowedInput input, [Service] GenericService<Followed> followedService,
+            [Service] UserService userService, [Service] GenericService<Website> websiteService)
         {
+            var existingUser = await userService.GetUserById(input.UserId);
+
+            if (existingUser == null)
+            {
+                throw new System.Exception($"User with ID '{input.UserId}' not found.");
+            }
+
+            var existingWebsite = await websiteService.GetByIdAsync(input.WebsiteId);
+
+            if (existingWebsite == null)
+            {
+                throw new System.Exception($"Website with ID '{input.WebsiteId}' not found.");
+            }
+
             var followed = new Followed
             {
                 UserId = input.UserId,

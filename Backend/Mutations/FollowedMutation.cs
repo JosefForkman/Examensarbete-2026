@@ -54,7 +54,7 @@ namespace Backend.Mutations
             return true;
         }
 
-        public async Task<UpdateFollowedPayload> UpdateFollowed(int id, UpdateFollowedInput input, [Service] GenericService<Followed> followedService
+        public async Task<UpdateFollowedPayload> UpdateFollowed(int id, UpdateFollowedInput input, [Service] GenericService<Followed> followedService,
             [Service] UserService userService, [Service] GenericService<Website> websiteService)
         {
             var followed = await followedService.GetByIdAsync(id);

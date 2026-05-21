@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "FOFd8WEBGs0=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\johan\\source\\repos\\Examensarbete-2026\\RSSFeedReader\\RSSFeedReader.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\johan\\.nuget\\packages\\system.servicemodel.syndication\\10.0.8\\system.servicemodel.syndication.10.0.8.nupkg.sha512"
+  ],
+  "logs": []
+}

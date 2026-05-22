@@ -13,6 +13,7 @@ namespace Backend.Models
         public string Link { get; set; } = string.Empty;
         public string? ImageUrl { get; set; }
         public DateTime PublicationDate { get; set; }
+        public string PostId { get; set; } = string.Empty; // Unique identifier for the post, can be used to prevent duplicates
         public int WebsiteId { get; set; }
 
         //Navigational properties

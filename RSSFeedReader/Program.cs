@@ -14,6 +14,17 @@ namespace RSSFeedReader
             LogFeedStructure(feed, "debug_feed_structure.txt");
         }
 
+        public static void SaveItemsToDatabase(SyndicationFeed feed)
+        {
+            // This is a placeholder method. In a real application, you would inject your database context
+            // and save the items to the database here.
+            foreach (var item in feed.Items)
+            {
+                Console.WriteLine($"Saving item: {item.Title?.Text}");
+                // Save to database logic goes here
+            }
+        }
+
         public static void LogFeedStructure(SyndicationFeed feed, string filePath)
         {
             var sb = new StringBuilder();

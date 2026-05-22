@@ -6,22 +6,69 @@ namespace RSSFeedReader
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             using var reader = XmlReader.Create("https://feeds.megaphone.fm/FSI1483080183");
             var feed = SyndicationFeed.Load(reader);
 
-            LogFeedStructure(feed, "debug_feed_structure.txt");
+            //LogFeedStructure(feed, "debug_feed_structure.txt");
+            await SaveItemsToDatabase(feed);
         }
 
-        public static void SaveItemsToDatabase(SyndicationFeed feed)
+        public static async Task SaveItemsToDatabase(SyndicationFeed feed)
         {
-            // This is a placeholder method. In a real application, you would inject your database context
-            // and save the items to the database here.
+            var httpClient = new HttpClient();
+            var endpoint = "https://localhost:7095/graphql";
+
             foreach (var item in feed.Items)
             {
-                Console.WriteLine($"Saving item: {item.Title?.Text}");
-                // Save to database logic goes here
+                var query = @"
+                mutation CreatePostItem($input: CreatePostItemInput!) {
+                  createPostItem(input: $input) {
+                    id
+                    title
+                    description
+                    link
+                    imageUrl
+                    publicationDate
+                    websiteId
+                  }
+                }";
+
+                var variables = new
+                {
+                    input = new
+                    {
+                        title = item.Title,
+                        link = item.Links.FirstOrDefault().Uri?.ToString() ?? "",
+                        publicationDate = item.PublishDate,
+                        websiteUrl = "https://www.syntax.fm/"
+                    }
+                };
+
+                var requestBody = new
+                {
+                    query = query,
+                    variables = variables
+                };
+
+                var content = new StringContent(
+                    System.Text.Json.JsonSerializer.Serialize(requestBody),
+                    Encoding.UTF8,
+                    "application/json"
+                );
+
+                var response = await httpClient.PostAsync(endpoint, content);
+                var responseString = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"Item '{item.Title.Text}' saved successfully.");
+                }
+                else
+                {
+                    Console.WriteLine($"Failed to save item '{item.Title.Text}': {responseString}");
+                }
             }
         }
 

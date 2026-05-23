@@ -39,9 +39,9 @@ namespace RSSFeedReader
                 {
                     input = new
                     {
-                        title = item.Title,
+                        title = item.Title.Text ?? "",
                         link = item.Links.FirstOrDefault().Uri?.ToString() ?? "",
-                        publicationDate = item.PublishDate,
+                        publicationDate = item.PublishDate.UtcDateTime,
                         websiteUrl = "https://www.syntax.fm/"
                     }
                 };

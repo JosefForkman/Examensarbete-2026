@@ -8,9 +8,9 @@ namespace Backend.Mutations
     [MutationType]
     public class PostItemMutation
     {
-        [Error<System.Exception>]
+        //[Error<System.Exception>]
         [Error<NotFoundException>]
-        [Error<AggregateException>]
+        //[Error<AggregateException>]
         public async Task<CreatePostItemPayload> CreatePostItem(CreatePostItemInput input, [Service] PostItemService postItemService, [Service] WebsiteService websiteService)
         {
             var website = await websiteService.GetByUrlAsync(input.WebsiteUrl);
@@ -61,9 +61,9 @@ namespace Backend.Mutations
             return true;
         }
 
-        [Error<System.Exception>]
+        //[Error<System.Exception>]
         [Error<NotFoundException>]
-        [Error<AggregateException>]
+        //[Error<AggregateException>]
         public async Task<UpdatePostItemPayload> UpdatePostItem(int id, UpdatePostItemInput input, [Service] PostItemService postItemService, [Service] WebsiteService websiteService)
         {
             var postItem = await postItemService.GetByIdAsync(id);

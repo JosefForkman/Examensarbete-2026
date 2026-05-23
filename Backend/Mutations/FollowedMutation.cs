@@ -10,7 +10,7 @@ namespace Backend.Mutations
     public class FollowedMutation
     {
         [Error<NotFoundException>]
-        [Error<AggregateException>]
+        //[Error<AggregateException>]
         public async Task<CreateFollowedPayload> CreateFollowed(CreateFollowedInput input, [Service] GenericService<Followed> followedService,
             [Service] UserService userService, [Service] GenericService<Website> websiteService)
         {
@@ -60,7 +60,7 @@ namespace Backend.Mutations
         }
 
         [Error<NotFoundException>]
-        [Error<AggregateException>]
+        //[Error<AggregateException>]
         public async Task<UpdateFollowedPayload> UpdateFollowed(int id, UpdateFollowedInput input, [Service] GenericService<Followed> followedService,
             [Service] UserService userService, [Service] GenericService<Website> websiteService)
         {

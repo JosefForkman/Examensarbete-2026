@@ -85,6 +85,7 @@ namespace Backend.Mutations
             postItem.Link = input.Link;
             postItem.ImageUrl = input.ImageUrl;
             postItem.PublicationDate = input.PublicationDate;
+            postItem.PostId = input.PostId;
             postItem.WebsiteId = website.Id;
             var updatedPostItem = await postItemService.UpdateAsync(postItem);
 

@@ -1,5 +1,8 @@
-﻿using System.ServiceModel.Syndication;
+﻿using Backend.Models;
+using System.ServiceModel.Syndication;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -14,6 +17,90 @@ namespace RSSFeedReader
 
             //LogFeedStructure(feed, "debug_feed_structure.txt");
             await SaveItemsToDatabase(feed);
+        }
+
+        public static async Task UpdateItemsInDatabase(SyndicationFeed feed)
+        {
+            var httpClient = new HttpClient();
+            var endpoint = "https://localhost:7095/graphql";
+
+            var existingItemsResponse = await httpClient.GetAsync($"{endpoint}?query={{ postItems {{ id title publicationDate PostId }} }}");
+
+            var existingItemsContent = await existingItemsResponse.Content.ReadAsStringAsync();
+
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+            var jsonDoc = JsonNode.Parse(existingItemsContent);
+
+            var postItemsJson = jsonDoc?["data"]?["postItems"];
+
+            var existingItems = postItemsJson.Deserialize<List<PostItem>>(options) ?? new List<PostItem>();
+
+            foreach (var item in existingItems)
+            {
+                var matchingFeedItem = feed.Items.FirstOrDefault(feedItem => feedItem.Id == item.PostId);
+
+                if (matchingFeedItem != null)
+                {
+                    var query = @"
+                    mutation UpdatePostItem($id: Int!, $input: UpdatePostItemInput!) {
+                      updatePostItem(id: $id, input: $input) {
+                        id
+                        title
+                        description
+                        link
+                        imageUrl
+                        publicationDate
+                        websiteId
+                      }
+                    }";
+                    var variables = new
+                    {
+                        id = item.Id,
+                        input = new
+                        {
+                            title = matchingFeedItem.Title.Text ?? "",
+                            description = feed.Description?.Text ?? "",
+                            link = matchingFeedItem.Links
+                                    .Select(link => link.Uri?.ToString())?
+                                    .Where(uri => uri.EndsWith(".mp3", StringComparison.OrdinalIgnoreCase))?
+                                    .FirstOrDefault()?.ToString() ?? "",
+                            publicationDate = matchingFeedItem.PublishDate.UtcDateTime,
+                            ImageUrl = matchingFeedItem.ElementExtensions
+                                .ReadElementExtensions<XElement>(
+                                    "image",
+                                    "http://www.itunes.com/dtds/podcast-1.0.dtd"
+                                )
+                                .FirstOrDefault()?.Attribute("href")?.Value ?? "",
+                            websiteUrl = "https://www.syntax.fm/"
+                        }
+                    };
+
+                    var requestBody = new
+                    {
+                        query = query,
+                        variables = variables
+                    };
+
+                    var content = new StringContent(
+                        System.Text.Json.JsonSerializer.Serialize(requestBody),
+                        Encoding.UTF8,
+                        "application/json"
+                    );
+
+                    var response = await httpClient.PostAsync(endpoint, content);
+                    var responseString = await response.Content.ReadAsStringAsync();
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        Console.WriteLine($"Item '{matchingFeedItem.Title.Text}' updated successfully.");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Failed to update item '{matchingFeedItem.Title.Text}': {responseString}");
+                    }
+                }
+            }
         }
 
         public static async Task SaveItemsToDatabase(SyndicationFeed feed)

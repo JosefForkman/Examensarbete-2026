@@ -8,6 +8,7 @@
         public string Link { get; set; } = string.Empty;
         public string? ImageUrl { get; set; }
         public DateTime PublicationDate { get; set; }
+        public string PostId { get; set; } = string.Empty;
         public string WebsiteName { get; set; } = string.Empty;
     }
 }

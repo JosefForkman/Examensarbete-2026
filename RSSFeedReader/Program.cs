@@ -56,6 +56,7 @@ namespace RSSFeedReader
                             .Where(uri => uri.EndsWith(".mp3", StringComparison.OrdinalIgnoreCase))?
                             .FirstOrDefault()?.ToString() ?? "",
                         publicationDate = item.PublishDate.UtcDateTime,
+                        PostId = item.Id,
                         ImageUrl = imageUrl,
                         websiteUrl = "https://www.syntax.fm/"
                     }

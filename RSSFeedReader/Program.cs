@@ -24,22 +24,31 @@ namespace RSSFeedReader
         {
             var httpClient = new HttpClient();
             var endpoint = "https://localhost:7095/graphql";
-            var endCursor = "";
             var pages = 1;
+            string? currentCursor = null;
 
             for(int i = 0; i<pages; i++)
             {
                 var requestBodyGet = new
                 {
                     query = @"
-                query {
-                  postItems {
-                    nodes {
-                      id
-                      title
+                        query GetPostItems($after: String){
+                          postItems(first: 50, after: $after) {
+                            nodes {
+                              id
+                              title
+                            }
+                            pageInfo {
+                              endCursor
+                            }
+                            totalCount
+                          }
+                        }",
+                    
+                    variables = new
+                    {
+                        after = currentCursor
                     }
-                  }
-                }"
                 };
 
                 var contentGet = new StringContent(
@@ -50,36 +59,38 @@ namespace RSSFeedReader
 
                 var existingItemsResponse = await httpClient.PostAsync(endpoint, contentGet);
 
-                Console.WriteLine(existingItemsResponse);
-
                 if (!existingItemsResponse.IsSuccessStatusCode)
                 {
                     string errorResponse = await existingItemsResponse.Content.ReadAsStringAsync();
                     Console.WriteLine($"GraphQL Server Error: {errorResponse}");
-                    return; // Stoppa här så du hinner läsa felet i konsolen
+                    return;
                 }
 
                 var existingItemsContent = await existingItemsResponse.Content.ReadAsStringAsync();
-
-                Console.WriteLine(existingItemsContent);
 
                 var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
                 var jsonDoc = JsonNode.Parse(existingItemsContent);
 
-                Console.WriteLine(jsonDoc);
+                int totalCount = jsonDoc?["data"]?["postItems"]?["totalCount"]?.GetValue<int>() ?? 0;
+
+                if (pages == 1)
+                {
+                    pages = (int)Math.Ceiling((double)totalCount / 50);
+                }
 
                 var postItemsJson = jsonDoc?["data"]?["postItems"]?["nodes"];
 
-                Console.WriteLine(postItemsJson);
+                string? nextCursor = jsonDoc?["data"]?["postItems"]?["pageInfo"]?["endCursor"]?.GetValue<string>();
+
+                currentCursor = nextCursor;
 
                 var existingItems = postItemsJson.Deserialize<List<PostItem>>(options) ?? new List<PostItem>();
 
-                Console.WriteLine($"Fetched {existingItems.Count} existing items from the database.");
-
                 foreach (var item in existingItems)
                 {
-                    var matchingFeedItem = feed.Items.FirstOrDefault(feedItem => feedItem.Title.Equals(item.Title));
+                    var matchingFeedItem = feed.Items.FirstOrDefault(feedItem =>
+                    string.Equals(feedItem.Title?.Text, item.Title, StringComparison.OrdinalIgnoreCase));
 
                     if (matchingFeedItem != null)
                     {
@@ -107,13 +118,13 @@ namespace RSSFeedReader
                                         .Where(uri => uri.EndsWith(".mp3", StringComparison.OrdinalIgnoreCase))?
                                         .FirstOrDefault()?.ToString() ?? "",
                                 publicationDate = matchingFeedItem.PublishDate.UtcDateTime,
-                                ImageUrl = matchingFeedItem.ElementExtensions
+                                imageUrl = matchingFeedItem.ElementExtensions
                                     .ReadElementExtensions<XElement>(
                                         "image",
                                         "http://www.itunes.com/dtds/podcast-1.0.dtd"
                                     )
                                     .FirstOrDefault()?.Attribute("href")?.Value ?? "",
-                                PostId = matchingFeedItem.Id,
+                                postId = matchingFeedItem.Id,
                                 websiteUrl = "https://www.syntax.fm/"
                             }
                         };
@@ -131,6 +142,7 @@ namespace RSSFeedReader
                         );
 
                         var response = await httpClient.PostAsync(endpoint, content);
+                        Console.WriteLine(response);
                         var responseString = await response.Content.ReadAsStringAsync();
 
                         if (response.IsSuccessStatusCode)

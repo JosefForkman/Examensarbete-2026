@@ -1,6 +1,7 @@
 ﻿using System.ServiceModel.Syndication;
 using System.Text;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace RSSFeedReader
 {
@@ -35,13 +36,27 @@ namespace RSSFeedReader
                   }
                 }";
 
+                var imageElement = item.ElementExtensions
+                    .ReadElementExtensions<XElement>(
+                        "image",
+                        "http://www.itunes.com/dtds/podcast-1.0.dtd"
+                    )
+                    .FirstOrDefault();
+
+                var imageUrl = imageElement?.Attribute("href")?.Value;
+
                 var variables = new
                 {
                     input = new
                     {
                         title = item.Title.Text ?? "",
-                        link = item.Links.FirstOrDefault().Uri?.ToString() ?? "",
+                        description = feed.Description?.Text ?? "",
+                        link = item.Links
+                            .Select(link => link.Uri?.ToString())?
+                            .Where(uri => uri.EndsWith(".mp3", StringComparison.OrdinalIgnoreCase))?
+                            .FirstOrDefault()?.ToString() ?? "",
                         publicationDate = item.PublishDate.UtcDateTime,
+                        ImageUrl = imageUrl,
                         websiteUrl = "https://www.syntax.fm/"
                     }
                 };

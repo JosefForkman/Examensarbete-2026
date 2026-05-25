@@ -1,4 +1,4 @@
-﻿using Backend.Models;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ServiceModel.Syndication;
 using System.Text;
 using System.Text.Json;
@@ -16,88 +16,131 @@ namespace RSSFeedReader
             var feed = SyndicationFeed.Load(reader);
 
             //LogFeedStructure(feed, "debug_feed_structure.txt");
-            await SaveItemsToDatabase(feed);
+            await UpdateItemsInDatabase(feed);
+            //await SaveItemsToDatabase(feed);
         }
 
         public static async Task UpdateItemsInDatabase(SyndicationFeed feed)
         {
             var httpClient = new HttpClient();
             var endpoint = "https://localhost:7095/graphql";
+            var endCursor = "";
+            var pages = 1;
 
-            var existingItemsResponse = await httpClient.GetAsync($"{endpoint}?query={{ postItems {{ id title publicationDate PostId }} }}");
-
-            var existingItemsContent = await existingItemsResponse.Content.ReadAsStringAsync();
-
-            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-
-            var jsonDoc = JsonNode.Parse(existingItemsContent);
-
-            var postItemsJson = jsonDoc?["data"]?["postItems"];
-
-            var existingItems = postItemsJson.Deserialize<List<PostItem>>(options) ?? new List<PostItem>();
-
-            foreach (var item in existingItems)
+            for(int i = 0; i<pages; i++)
             {
-                var matchingFeedItem = feed.Items.FirstOrDefault(feedItem => feedItem.Id == item.PostId);
-
-                if (matchingFeedItem != null)
+                var requestBodyGet = new
                 {
-                    var query = @"
-                    mutation UpdatePostItem($id: Int!, $input: UpdatePostItemInput!) {
-                      updatePostItem(id: $id, input: $input) {
-                        id
-                        title
-                        description
-                        link
-                        imageUrl
-                        publicationDate
-                        websiteId
-                      }
-                    }";
-                    var variables = new
-                    {
-                        id = item.Id,
-                        input = new
-                        {
-                            title = matchingFeedItem.Title.Text ?? "",
-                            description = feed.Description?.Text ?? "",
-                            link = matchingFeedItem.Links
-                                    .Select(link => link.Uri?.ToString())?
-                                    .Where(uri => uri.EndsWith(".mp3", StringComparison.OrdinalIgnoreCase))?
-                                    .FirstOrDefault()?.ToString() ?? "",
-                            publicationDate = matchingFeedItem.PublishDate.UtcDateTime,
-                            ImageUrl = matchingFeedItem.ElementExtensions
-                                .ReadElementExtensions<XElement>(
-                                    "image",
-                                    "http://www.itunes.com/dtds/podcast-1.0.dtd"
-                                )
-                                .FirstOrDefault()?.Attribute("href")?.Value ?? "",
-                            websiteUrl = "https://www.syntax.fm/"
-                        }
-                    };
-
-                    var requestBody = new
-                    {
-                        query = query,
-                        variables = variables
-                    };
-
-                    var content = new StringContent(
-                        System.Text.Json.JsonSerializer.Serialize(requestBody),
-                        Encoding.UTF8,
-                        "application/json"
-                    );
-
-                    var response = await httpClient.PostAsync(endpoint, content);
-                    var responseString = await response.Content.ReadAsStringAsync();
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        Console.WriteLine($"Item '{matchingFeedItem.Title.Text}' updated successfully.");
+                    query = @"
+                query {
+                  postItems {
+                    nodes {
+                      id
+                      title
                     }
-                    else
+                  }
+                }"
+                };
+
+                var contentGet = new StringContent(
+                    System.Text.Json.JsonSerializer.Serialize(requestBodyGet),
+                    System.Text.Encoding.UTF8,
+                    "application/json"
+                );
+
+                var existingItemsResponse = await httpClient.PostAsync(endpoint, contentGet);
+
+                Console.WriteLine(existingItemsResponse);
+
+                if (!existingItemsResponse.IsSuccessStatusCode)
+                {
+                    string errorResponse = await existingItemsResponse.Content.ReadAsStringAsync();
+                    Console.WriteLine($"GraphQL Server Error: {errorResponse}");
+                    return; // Stoppa här så du hinner läsa felet i konsolen
+                }
+
+                var existingItemsContent = await existingItemsResponse.Content.ReadAsStringAsync();
+
+                Console.WriteLine(existingItemsContent);
+
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+                var jsonDoc = JsonNode.Parse(existingItemsContent);
+
+                Console.WriteLine(jsonDoc);
+
+                var postItemsJson = jsonDoc?["data"]?["postItems"]?["nodes"];
+
+                Console.WriteLine(postItemsJson);
+
+                var existingItems = postItemsJson.Deserialize<List<PostItem>>(options) ?? new List<PostItem>();
+
+                Console.WriteLine($"Fetched {existingItems.Count} existing items from the database.");
+
+                foreach (var item in existingItems)
+                {
+                    var matchingFeedItem = feed.Items.FirstOrDefault(feedItem => feedItem.Title.Equals(item.Title));
+
+                    if (matchingFeedItem != null)
                     {
-                        Console.WriteLine($"Failed to update item '{matchingFeedItem.Title.Text}': {responseString}");
+                        var query = @"
+                        mutation UpdatePostItem($id: Int!, $input: UpdatePostItemInput!) {
+                          updatePostItem(id: $id, input: $input) {
+                            id
+                            title
+                            description
+                            link
+                            imageUrl
+                            publicationDate
+                            websiteId
+                          }
+                        }";
+                        var variables = new
+                        {
+                            id = item.Id,
+                            input = new
+                            {
+                                title = matchingFeedItem.Title.Text ?? "",
+                                description = feed.Description?.Text ?? "",
+                                link = matchingFeedItem.Links
+                                        .Select(link => link.Uri?.ToString())?
+                                        .Where(uri => uri.EndsWith(".mp3", StringComparison.OrdinalIgnoreCase))?
+                                        .FirstOrDefault()?.ToString() ?? "",
+                                publicationDate = matchingFeedItem.PublishDate.UtcDateTime,
+                                ImageUrl = matchingFeedItem.ElementExtensions
+                                    .ReadElementExtensions<XElement>(
+                                        "image",
+                                        "http://www.itunes.com/dtds/podcast-1.0.dtd"
+                                    )
+                                    .FirstOrDefault()?.Attribute("href")?.Value ?? "",
+                                PostId = matchingFeedItem.Id,
+                                websiteUrl = "https://www.syntax.fm/"
+                            }
+                        };
+
+                        var requestBody = new
+                        {
+                            query = query,
+                            variables = variables
+                        };
+
+                        var content = new StringContent(
+                            System.Text.Json.JsonSerializer.Serialize(requestBody),
+                            Encoding.UTF8,
+                            "application/json"
+                        );
+
+                        var response = await httpClient.PostAsync(endpoint, content);
+                        var responseString = await response.Content.ReadAsStringAsync();
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            Console.WriteLine($"Item '{matchingFeedItem.Title.Text}' updated successfully.");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Failed to update item '{matchingFeedItem.Title.Text}': {responseString}");
+                        }
                     }
                 }
             }
@@ -208,6 +251,21 @@ namespace RSSFeedReader
             }
 
             File.WriteAllText(filePath, sb.ToString(), Encoding.UTF8);
+        }
+
+        public class PostItem
+        {
+            [Key]
+            public int Id { get; set; }
+            [Required]
+            public string Title { get; set; } = string.Empty;
+            public string? Description { get; set; }
+            [Required]
+            public string Link { get; set; } = string.Empty;
+            public string? ImageUrl { get; set; }
+            public DateTime PublicationDate { get; set; }
+            public string PostId { get; set; } = string.Empty; // Unique identifier for the post, can be used to prevent duplicates
+            public int WebsiteId { get; set; }
         }
     }
 }

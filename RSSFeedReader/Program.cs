@@ -92,6 +92,8 @@ namespace RSSFeedReader
                     var matchingFeedItem = feed.Items.FirstOrDefault(feedItem =>
                     string.Equals(feedItem.Title?.Text, item.Title, StringComparison.OrdinalIgnoreCase));
 
+                    Console.WriteLine(matchingFeedItem.Id);
+
                     if (matchingFeedItem != null)
                     {
                         var query = @"

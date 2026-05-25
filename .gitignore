@@ -18,3 +18,8 @@
 Examensarbete-2026.sln.DotSettings.user
 /RSSFeedReader/obj/Debug/net10.0
 /RSSFeedReader/bin/Debug/net10.0
+/RSSFeedReader/obj/project.assets.json
+/RSSFeedReader/obj/project.nuget.cache
+/RSSFeedReader/obj/RSSFeedReader.csproj.nuget.dgspec.json
+/RSSFeedReader/obj/RSSFeedReader.csproj.nuget.g.props
+/RSSFeedReader/obj/RSSFeedReader.csproj.nuget.g.targets

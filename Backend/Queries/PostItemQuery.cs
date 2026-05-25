@@ -9,7 +9,7 @@ namespace Backend.Queries
     [QueryType]
     public static class PostItemQuery
     {
-        [UsePaging]
+        [UsePaging(IncludeTotalCount = true)]
         [UseProjection]
         [UseFiltering]
         [UseSorting]

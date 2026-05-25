@@ -8,8 +8,16 @@ var postgres = builder
                 .WithPgAdmin();
 var db = postgres.AddDatabase("mydb");
 
-builder.AddProject<Projects.Backend>("backend")
+var backend = builder.AddProject<Projects.Backend>("backend")
     .WithReference(db)
     .WaitFor(db);
+
+
+#pragma warning disable ASPIREJAVASCRIPT001
+builder.AddNextJsApp("frontend", "../frontend")
+    .WithReference(backend)
+    .WaitFor(backend)
+    .WithExternalHttpEndpoints();
+#pragma warning restore ASPIREJAVASCRIPT001
 
 builder.Build().Run();

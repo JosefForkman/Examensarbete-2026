@@ -30,24 +30,26 @@ function Nav() {
                 <span className={style.hamburger}></span>
                 <span className={style.hamburger}></span>
             </button>
-            <nav aria-label="Main navigation" className={`${navOpen ? style.open : ""}`}>
+            <nav
+                aria-label="Main navigation"
+                className={`${navOpen ? style.open : ""}`}>
                 <ul>
                     <li className={isPathActive("/")}>
                         <Link href="/">
                             <FontAwesomeIcon icon={faHome} size="xl" />
-                            Hem
+                            <span className={style.label}>Hem</span>
                         </Link>
                     </li>
                     <li className={isPathActive("/explore")}>
                         <Link href="/explore">
                             <FontAwesomeIcon icon={faCompass} size="xl" />
-                            Utforska
+                            <span className={style.label}>Utforska</span>
                         </Link>
                     </li>
                     <li className={isPathActive("/library")}>
                         <Link href="/library">
                             <FontAwesomeIcon icon={faBookmark} size="xl" />
-                            Bibliotek
+                            <span className={style.label}>Bibliotek</span>
                         </Link>
                     </li>
                 </ul>
@@ -59,13 +61,13 @@ function Nav() {
                                 icon={faRightToBracket}
                                 size="xl"
                             />
-                            Logga in
+                            <span className={style.label}>Logga in</span>
                         </Link>
                     </li>
                     <li className={isPathActive("/settings")}>
                         <Link href="/settings">
                             <FontAwesomeIcon icon={faCog} size="xl" />
-                            Inställningar
+                            <span className={style.label}>Inställningar</span>
                         </Link>
                     </li>
                 </ul>

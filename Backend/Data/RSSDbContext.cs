@@ -17,25 +17,6 @@ namespace Backend.Data
         {
             base.OnModelCreating(modelBuilder);
             // Configure relationships and constraints if needed
-            modelBuilder.Entity<Followed>()
-                .HasOne(followed => followed.User)
-                .WithMany()
-                .HasForeignKey(followed => followed.UserId);
-
-            modelBuilder.Entity<Followed>()
-                .HasOne(followed => followed.Website)
-                .WithMany()
-                .HasForeignKey(followed => followed.WebsiteId);
-
-            modelBuilder.Entity<Watched>()
-                .HasOne(watched => watched.User)
-                .WithMany()
-                .HasForeignKey(watched => watched.UserId);
-
-            modelBuilder.Entity<Watched>()
-                .HasOne(watched => watched.PostItem)
-                .WithMany()
-                .HasForeignKey(watched => watched.PostItemId);
 
             modelBuilder.Entity<PostItem>()
             .ToTable(item => item.HasCheckConstraint(

@@ -9,7 +9,7 @@ namespace Backend.Queries
     [QueryType]
     public static class PostItemQuery
     {
-        [UsePaging]
+        [UsePaging(IncludeTotalCount = true)]
         [UseProjection]
         [UseFiltering]
         [UseSorting]
@@ -24,6 +24,7 @@ namespace Backend.Queries
                     Link = p.Link,
                     ImageUrl = p.ImageUrl,
                     PublicationDate = p.PublicationDate,
+                    PostId = p.PostId,
                     WebsiteName = p.Website.SiteName
                 });
         }
@@ -43,6 +44,7 @@ namespace Backend.Queries
                 Link = postItem.Link,
                 ImageUrl = postItem.ImageUrl,
                 PublicationDate = postItem.PublicationDate,
+                PostId = postItem.PostId,
                 WebsiteName = postItem.Website.SiteName
             };
         }

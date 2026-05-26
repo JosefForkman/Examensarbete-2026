@@ -9,7 +9,7 @@ namespace Backend.Mutations
     public class WatchedMutation
     {
         [Error<NotFoundException>]
-        [Error<AggregateException>]
+        //[Error<AggregateException>]
         public async Task<CreateWatchedPayload> CreateWatched(CreateWatchedInput input, [Service] GenericService<Watched> watchedService,
             [Service] UserService userService, [Service] PostItemService postItemService)
         {
@@ -59,7 +59,7 @@ namespace Backend.Mutations
         }
 
         [Error<NotFoundException>]
-        [Error<AggregateException>]
+        //[Error<AggregateException>]
         public async Task<UpdateWatchedPayload> UpdateWatched(int id, UpdateWatchedInput input, [Service] GenericService<Watched> watchedService,
             [Service] UserService userService, [Service] GenericService<Website> websiteService)
         {

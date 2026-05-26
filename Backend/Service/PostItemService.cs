@@ -17,16 +17,11 @@ namespace Backend.Service
                 .Include(postItem => postItem.Website);
         }
 
-        public async override Task<PostItem> GetByIdAsync(int id)
+        public async override Task<PostItem?> GetByIdAsync(int id)
         {
             var postItem = await _context.PostItems
                 .Include(postItem => postItem.Website)
                 .SingleOrDefaultAsync(postItem => postItem.Id == id);
-
-            if (postItem == null)
-            {
-                throw new NotFoundException(nameof(PostItem), id);
-            }
             
             return postItem;
         }

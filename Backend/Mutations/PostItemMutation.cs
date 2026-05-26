@@ -28,6 +28,7 @@ namespace Backend.Mutations
                 Description = input.Description,
                 Link = input.Link,
                 ImageUrl = input.ImageUrl,
+                PostId = input.PostId,
                 PublicationDate = input.PublicationDate,
                 WebsiteId = website.Id
             };

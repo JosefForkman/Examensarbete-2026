@@ -21,9 +21,20 @@
     }
 }
 
+* {
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+}
+
 body {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto 1fr auto;
     background-color: var(--slate-gray);
     color: var(--ash-grey);
+
+    min-height: 100vh;
 }
 
 /* Text Colors */

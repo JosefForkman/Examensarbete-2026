@@ -16,8 +16,8 @@ namespace RSSFeedReader
             var feed = SyndicationFeed.Load(reader);
 
             //LogFeedStructure(feed, "debug_feed_structure.txt");
-            await UpdateItemsInDatabase(feed);
-            //await SaveItemsToDatabase(feed);
+            //await UpdateItemsInDatabase(feed);
+            await SaveItemsToDatabase(feed);
         }
 
         public static async Task UpdateItemsInDatabase(SyndicationFeed feed)
@@ -37,6 +37,7 @@ namespace RSSFeedReader
                             nodes {
                               id
                               title
+                              postId
                             }
                             pageInfo {
                               endCursor
@@ -161,9 +162,80 @@ namespace RSSFeedReader
         {
             var httpClient = new HttpClient();
             var endpoint = "https://localhost:7095/graphql";
+            var pages = 1;
+            string? currentCursor = null;
+            var existingItems = new List<PostItem>();
+
+            for (int i = 0; i<pages; i++)
+            {
+                var requestBodyGet = new
+                {
+                    query = @"
+                        query GetPostItems($after: String){
+                          postItems(first: 50, after: $after, order: { id: ASC }) {
+                            nodes {
+                              id
+                              title
+                              postId
+                            }
+                            pageInfo {
+                              endCursor
+                            }
+                            totalCount
+                          }
+                        }",
+
+                    variables = new
+                    {
+                        after = currentCursor
+                    }
+                };
+
+                var contentGet = new StringContent(
+                    System.Text.Json.JsonSerializer.Serialize(requestBodyGet),
+                    System.Text.Encoding.UTF8,
+                    "application/json"
+                );
+
+                var existingItemsResponse = await httpClient.PostAsync(endpoint, contentGet);
+
+                if (!existingItemsResponse.IsSuccessStatusCode)
+                {
+                    string errorResponse = await existingItemsResponse.Content.ReadAsStringAsync();
+                    Console.WriteLine($"GraphQL Server Error: {errorResponse}");
+                    return;
+                }
+
+                var existingItemsContent = await existingItemsResponse.Content.ReadAsStringAsync();
+
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+                var jsonDoc = JsonNode.Parse(existingItemsContent);
+
+                int totalCount = jsonDoc?["data"]?["postItems"]?["totalCount"]?.GetValue<int>() ?? 0;
+
+                if (pages == 1)
+                {
+                    pages = (int)Math.Ceiling((double)totalCount / 50);
+                }
+
+                var postItemsJson = jsonDoc?["data"]?["postItems"]?["nodes"];
+
+                string? nextCursor = jsonDoc?["data"]?["postItems"]?["pageInfo"]?["endCursor"]?.GetValue<string>();
+
+                currentCursor = nextCursor;
+
+                existingItems.AddRange(postItemsJson.Deserialize<List<PostItem>>(options) ?? new List<PostItem>());
+            }
 
             foreach (var item in feed.Items)
             {
+                if (existingItems.Any(existingItem => string.Equals(existingItem.PostId, item.Id, StringComparison.OrdinalIgnoreCase)))
+                {
+                    Console.WriteLine($"Item '{item.Title.Text}' already exists. Skipping.");
+                    continue;
+                }
+
                 var query = @"
                 mutation CreatePostItem($input: CreatePostItemInput!) {
                   createPostItem(input: $input) {
@@ -197,8 +269,8 @@ namespace RSSFeedReader
                             .Where(uri => uri.EndsWith(".mp3", StringComparison.OrdinalIgnoreCase))?
                             .FirstOrDefault()?.ToString() ?? "",
                         publicationDate = item.PublishDate.UtcDateTime,
-                        PostId = item.Id,
-                        ImageUrl = imageUrl,
+                        postId = item.Id,
+                        imageUrl = imageUrl,
                         websiteUrl = "https://www.syntax.fm/"
                     }
                 };

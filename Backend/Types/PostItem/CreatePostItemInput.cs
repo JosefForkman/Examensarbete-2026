@@ -6,6 +6,7 @@
         public string? Description { get; set; }
         public string Link { get; set; } = null!;
         public string? ImageUrl { get; set; }
+        public string PostId { get; set; } = string.Empty!;
         public DateTime PublicationDate { get; set; }
         public string WebsiteUrl { get; set; } = null!;
 

@@ -33,7 +33,7 @@ namespace RSSFeedReader
                 {
                     query = @"
                         query GetPostItems($after: String){
-                          postItems(first: 50, after: $after) {
+                          postItems(first: 50, after: $after, order: { id: ASC }) {
                             nodes {
                               id
                               title
@@ -90,9 +90,7 @@ namespace RSSFeedReader
                 foreach (var item in existingItems)
                 {
                     var matchingFeedItem = feed.Items.FirstOrDefault(feedItem =>
-                    string.Equals(feedItem.Title?.Text, item.Title, StringComparison.OrdinalIgnoreCase));
-
-                    Console.WriteLine(matchingFeedItem.Id);
+                    string.Equals(feedItem.Id, item.PostId, StringComparison.OrdinalIgnoreCase));
 
                     if (matchingFeedItem != null)
                     {
@@ -117,7 +115,7 @@ namespace RSSFeedReader
                                 description = feed.Description?.Text ?? "",
                                 link = matchingFeedItem.Links
                                         .Select(link => link.Uri?.ToString())?
-                                        .Where(uri => uri.EndsWith(".mp3", StringComparison.OrdinalIgnoreCase))?
+                                        .Where(uri => uri.Contains(".mp3", StringComparison.OrdinalIgnoreCase))?
                                         .FirstOrDefault()?.ToString() ?? "",
                                 publicationDate = matchingFeedItem.PublishDate.UtcDateTime,
                                 imageUrl = matchingFeedItem.ElementExtensions
@@ -144,7 +142,6 @@ namespace RSSFeedReader
                         );
 
                         var response = await httpClient.PostAsync(endpoint, content);
-                        Console.WriteLine(response);
                         var responseString = await response.Content.ReadAsStringAsync();
 
                         if (response.IsSuccessStatusCode)

@@ -1,5 +1,5 @@
 import { faVolumeHigh } from "@fortawesome/free-solid-svg-icons/faVolumeHigh";
-import { volumeControlStates } from "./AudioPlayer.types";
+import { volumeControlStates } from "@/types/AudioPlayer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faVolumeMedium } from "@fortawesome/free-solid-svg-icons/faVolumeMedium";
 import { faVolumeLow } from "@fortawesome/free-solid-svg-icons/faVolumeLow";

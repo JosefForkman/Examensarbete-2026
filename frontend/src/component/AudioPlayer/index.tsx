@@ -5,14 +5,10 @@ import { volumeControlStates } from "./AudioPlayer.types";
 import ProgressBar from "./ProgressBar";
 import SourceList from "./SourceList";
 import VolumeControl from "./VolumeControl";
+import { useAudio } from "@/context/AudioContext";
 
 function AudioPlayer() {
-    const sources = [
-        "https://traffic.megaphone.fm/FSI1805655428.mp3",
-        "https://traffic.megaphone.fm/FSI8719347240.mp3",
-        "https://traffic.megaphone.fm/FSI1796633736.mp3",
-    ];
-    const [currentSource, setCurrentSource] = useState(0);
+    const { queue, currentTrack, setCurrentTrack } = useAudio();
     const audioRef = useRef<HTMLAudioElement>(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
@@ -24,7 +20,7 @@ function AudioPlayer() {
 
     const togglePlay = () => {
         const audio = audioRef.current;
-        if (!audio) {
+        if (!audio || audio.src === "") {
             return;
         }
         if (isPlaying) {
@@ -75,15 +71,13 @@ function AudioPlayer() {
     };
 
     const nextAudioSource = () => {
-        setCurrentSource((prev) => (prev + 1) % sources.length);
+        setCurrentTrack(queue[0]);
         setCurrentTime(0);
         setDuration(0);
         setIsPlaying(false);
     };
     const previousAudioSource = () => {
-        setCurrentSource(
-            (prev) => (prev - 1 + sources.length) % sources.length,
-        );
+        setCurrentTrack(queue[0]);
         setCurrentTime(0);
         setDuration(0);
         setIsPlaying(false);
@@ -139,8 +133,8 @@ function AudioPlayer() {
     return (
         <div>
             <audio
-                src={sources[currentSource]}
-                title="syntax"
+                src={currentTrack?.url}
+                title={currentTrack?.title}
                 controls
                 ref={audioRef}
                 onLoadedMetadata={onLoadedMetadata}
@@ -152,7 +146,7 @@ function AudioPlayer() {
                 Your browser does not support the audio element.
             </audio>
 
-            <SourceList sources={sources} currentSource={currentSource} />
+            <SourceList sources={queue} currentSource={currentTrack} />
 
             <ProgressBar
                 currentTime={currentTime}

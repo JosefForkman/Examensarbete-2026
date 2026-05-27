@@ -1,17 +1,16 @@
 :root {
     --charcoal-blue: #587483;
-    --slate-gray: #A9A9A9;
-    --ash-grey: #2A2A2A;
-    --straw-gold: #E5D352;
-
+    --slate-gray: #a9a9a9;
+    --ash-grey: #2a2a2a;
+    --straw-gold: #e5d352;
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --charcoal-blue: #2F3E46;
-        --slate-gray: #354F52;
-        --ash-grey: #CAD2C5;
-        --straw-gold: #E5D352;
+        --charcoal-blue: #2f3e46;
+        --slate-gray: #354f52;
+        --ash-grey: #cad2c5;
+        --straw-gold: #e5d352;
     }
 }
 
@@ -21,9 +20,24 @@
     }
 }
 
+* {
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+}
+
 body {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
     background-color: var(--slate-gray);
     color: var(--ash-grey);
+
+    min-height: 100vh;
+
+    @media screen and (width >= 768px) {
+        grid-template-columns: auto 1fr;
+    }
 }
 
 /* Text Colors */

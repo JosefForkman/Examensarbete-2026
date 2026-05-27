@@ -1,6 +1,6 @@
 .nav {
     grid-column: -1 / 1;
-    grid-row: 3 / 4;
+    grid-row: 4 / 5;
     padding-inline: 1rem;
     padding-block: 1rem;
     border-top: 2px solid var(--ash-grey);

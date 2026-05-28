@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faVolumeMedium } from "@fortawesome/free-solid-svg-icons/faVolumeMedium";
 import { faVolumeLow } from "@fortawesome/free-solid-svg-icons/faVolumeLow";
 import { faVolumeMute } from "@fortawesome/free-solid-svg-icons/faVolumeMute";
+import Button from "../Button";
 
 type VolumeControlProps = {
     volume: number;
@@ -18,6 +19,23 @@ function VolumeControl({
     onVolumeChange,
     onToggleMute,
 }: VolumeControlProps) {
+    const getVolumeIcon = () => {
+        switch (volumeState) {
+            case volumeControlStates.HIGH:
+                return faVolumeHigh;
+            case volumeControlStates.MEDIUM:
+                return faVolumeMedium;
+            case volumeControlStates.LOW:
+                return faVolumeLow;
+            case volumeControlStates.MUTE:
+                return faVolumeMute;
+            case volumeControlStates.OFF:
+                return faVolumeMute;
+            default:
+                return faVolumeMute;
+        }
+    };
+
     return (
         <div className="volume-control">
             <input
@@ -25,22 +43,18 @@ function VolumeControl({
                 min="0"
                 max="1"
                 step="0.001"
+                aria-label="Volume Control"
                 value={volume}
                 onChange={(event) =>
                     onVolumeChange(parseFloat(event.target.value))
                 }
             />
-            <button onClick={onToggleMute}>
-                {volumeState === volumeControlStates.HIGH ? (
-                    <FontAwesomeIcon icon={faVolumeHigh} />
-                ) : volumeState === volumeControlStates.MEDIUM ? (
-                    <FontAwesomeIcon icon={faVolumeMedium} />
-                ) : volumeState === volumeControlStates.LOW ? (
-                    <FontAwesomeIcon icon={faVolumeLow} />
-                ) : (
-                    <FontAwesomeIcon icon={faVolumeMute} />
-                )}
-            </button>
+            <Button
+                Icon={getVolumeIcon()}
+                Variant="IconOnly"
+                aria-label="Toggle Mute"
+                onClick={onToggleMute}
+            />
         </div>
     );
 }

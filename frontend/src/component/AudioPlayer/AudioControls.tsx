@@ -1,17 +1,14 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faBackwardStep,
-    faClockRotateLeft,
     faForwardStep,
     faPause,
     faPlay,
 } from "@fortawesome/free-solid-svg-icons";
+import Button from "../Button";
 
 type AudioControlsProps = {
     isPlaying: boolean;
     onTogglePlay: () => void;
-    onSkipForward: () => void;
-    onSkipBackward: () => void;
     onNext: () => void;
     onPrevious: () => void;
 };
@@ -19,28 +16,22 @@ type AudioControlsProps = {
 function AudioControls({
     isPlaying,
     onTogglePlay,
-    onSkipForward,
-    onSkipBackward,
     onNext,
     onPrevious,
 }: AudioControlsProps) {
     return (
         <div className="audio-controls">
-            <button onClick={onPrevious}>
-                <FontAwesomeIcon icon={faBackwardStep} />
-            </button>
-            <button onClick={onSkipBackward}>
-                <FontAwesomeIcon icon={faClockRotateLeft} />
-            </button>
-            <button onClick={onTogglePlay}>
-                <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} />
-            </button>
-            <button onClick={onSkipForward}>
-                <FontAwesomeIcon icon={faClockRotateLeft} />
-            </button>
-            <button onClick={onNext}>
-                <FontAwesomeIcon icon={faForwardStep} />
-            </button>
+            <Button
+                Icon={faBackwardStep}
+                Variant="IconOnly"
+                onClick={onPrevious}
+            />
+            <Button
+                Variant="IconOnly"
+                Icon={isPlaying ? faPause : faPlay}
+                onClick={onTogglePlay}
+            />
+            <Button Icon={faForwardStep} Variant="IconOnly" onClick={onNext} />
         </div>
     );
 }

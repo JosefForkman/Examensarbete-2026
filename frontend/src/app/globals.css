@@ -30,7 +30,10 @@ body {
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr auto auto;
-    background-color: var(--slate-gray);
+    background: hsla(from var(--slate-gray) h s l / 0.6) url(/background.jpg)
+        no-repeat center center fixed;
+    background-blend-mode: darken;
+    background-size: cover;
     color: var(--ash-grey);
 
     min-height: 100vh;

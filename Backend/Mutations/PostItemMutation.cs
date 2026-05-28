@@ -102,7 +102,7 @@ namespace Backend.Mutations
 
             if (!validationResult.IsValid)
             {
-                throw new ValidationException($"Validation failed for CreatePostItemInput {validationResult.Errors.Select(e => e.ErrorMessage)}");
+                throw new ValidationException($"Validation failed for UpdatePostItemInput {validationResult.Errors.Select(e => e.ErrorMessage)}");
             }
 
             postItem.Title = input.Title;

@@ -2,7 +2,10 @@
 using Backend.Models;
 using Backend.Service;
 using Backend.Types.Followed;
+using Backend.Validation.FollowedValidations;
+using FluentValidation;
 using Microsoft.AspNetCore.Identity;
+using ValidationException = Backend.Exception.ValidationException;
 
 namespace Backend.Mutations
 {
@@ -14,6 +17,16 @@ namespace Backend.Mutations
         public async Task<CreateFollowedPayload> CreateFollowed(CreateFollowedInput input, [Service] GenericService<Followed> followedService,
             [Service] UserService userService, [Service] GenericService<Website> websiteService)
         {
+            IValidator<CreateFollowedInput> Validator = new CreateFollowedInputValidation();
+
+            var validationResult =
+            await Validator.ValidateAsync(input, options => options.IncludeRuleSets("Create"));
+
+            if (!validationResult.IsValid)
+            {
+                throw new ValidationException($"Validation failed for CreateFollowedInput {validationResult.Errors.Select(e => e.ErrorMessage)}");
+            }
+
             var existingUser = await userService.GetUserById(input.UserId);
 
             if (existingUser == null)
@@ -64,6 +77,16 @@ namespace Backend.Mutations
         public async Task<UpdateFollowedPayload> UpdateFollowed(int id, UpdateFollowedInput input, [Service] GenericService<Followed> followedService,
             [Service] UserService userService, [Service] GenericService<Website> websiteService)
         {
+            IValidator<UpdateFollowedInput> Validator = new UpdateFollowedInputValidation();
+
+            var validationResult =
+            await Validator.ValidateAsync(input, options => options.IncludeRuleSets("Update"));
+
+            if (!validationResult.IsValid)
+            {
+                throw new ValidationException($"Validation failed for UpdateFollowedInput {validationResult.Errors.Select(e => e.ErrorMessage)}");
+            }
+
             var followed = await followedService.GetByIdAsync(id);
 
             if (followed == null)

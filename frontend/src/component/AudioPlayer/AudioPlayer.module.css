@@ -95,15 +95,18 @@
         .ProgressBar {
             grid-column: 1 / -1;
         }
+        .toggleButton {
+            display: none;
+        }
     }
 }
 @media screen and (width < 768px) {
     .open {
         grid-template-columns: 1fr auto;
+        gap: 0.3rem;
 
         .AudioControls {
             svg {
-
                 font-size: 1.3rem;
             }
             span {
@@ -113,5 +116,11 @@
         .ProgressBar {
             display: none;
         }
+        .toggleButton {
+            grid-column: 2;
+        }
+    }
+    .toggleButton {
+        justify-self: end;
     }
 }

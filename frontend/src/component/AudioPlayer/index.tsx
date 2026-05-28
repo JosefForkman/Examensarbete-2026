@@ -1,11 +1,13 @@
 "use client";
 import { useRef, useState } from "react";
+import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import AudioControls from "./AudioControls";
 import { volumeControlStates } from "@/types/AudioPlayer";
 import ProgressBar from "./ProgressBar";
 import SourceList from "./SourceList";
 import VolumeControl from "./VolumeControl";
 import { useAudio } from "@/context/AudioContext";
+import Button from "../Button";
 
 import styles from "./AudioPlayer.module.css";
 
@@ -118,8 +120,7 @@ function AudioPlayer() {
 
     return (
         <div
-            className={`${styles.audioPlayerContainer} ${open ? styles.open : ""} bg-charcoal-blue`}
-            onClick={toggleOpen}>
+            className={`${styles.audioPlayerContainer} ${open ? styles.open : ""} bg-charcoal-blue`}>
             <audio
                 src={currentTrack?.url}
                 title={currentTrack?.title}
@@ -134,6 +135,12 @@ function AudioPlayer() {
                 Your browser does not support the audio element.
             </audio>
 
+            <Button
+                className={styles.toggleButton}
+                Variant="IconOnly"
+                Icon={open ? faChevronUp : faChevronDown}
+                onClick={toggleOpen}
+            />
             <div className={styles.trackInfo}>
                 <h2>{currentTrack?.title ?? "Ingen podd tillgänglig"}</h2>
                 <h3>{currentTrack?.artist}</h3>

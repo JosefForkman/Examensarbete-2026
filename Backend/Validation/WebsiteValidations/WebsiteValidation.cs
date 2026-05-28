@@ -1,7 +1,7 @@
 using Backend.Models;
 using FluentValidation;
 
-namespace Backend.Validation;
+namespace Backend.Validation.WebsiteValidations;
 
 public class WebsiteValidation : AbstractValidator<Website>
 {

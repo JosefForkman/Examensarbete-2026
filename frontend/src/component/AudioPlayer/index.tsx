@@ -1,13 +1,17 @@
 "use client";
 import { useRef, useState } from "react";
 import AudioControls from "./AudioControls";
-import { volumeControlStates } from "./AudioPlayer.types";
+import { volumeControlStates } from "@/types/AudioPlayer";
 import ProgressBar from "./ProgressBar";
 import SourceList from "./SourceList";
 import VolumeControl from "./VolumeControl";
 import { useAudio } from "@/context/AudioContext";
 
+import styles from "./AudioPlayer.module.css";
+
 function AudioPlayer() {
+    const [open, setOpen] = useState(false);
+
     const { queue, currentTrack, setCurrentTrack } = useAudio();
     const audioRef = useRef<HTMLAudioElement>(null);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -17,6 +21,10 @@ function AudioPlayer() {
     const [volumeState, setVolumeState] = useState<volumeControlStates>(
         volumeControlStates.HIGH,
     );
+
+    const toggleOpen = () => {
+        setOpen((prev) => !prev);
+    };
 
     const togglePlay = () => {
         const audio = audioRef.current;
@@ -82,28 +90,6 @@ function AudioPlayer() {
         setDuration(0);
         setIsPlaying(false);
     };
-    const skipforward = (seconds: number) => {
-        const audio = audioRef.current;
-        if (!audio) {
-            return;
-        }
-        if (audio.currentTime + seconds > duration) {
-            audio.currentTime = duration;
-            return;
-        }
-        audio.currentTime += seconds;
-    };
-    const skipBackward = (seconds: number) => {
-        const audio = audioRef.current;
-        if (!audio) {
-            return;
-        }
-        if (audio.currentTime - seconds < 0) {
-            audio.currentTime = 0;
-            return;
-        }
-        audio.currentTime -= seconds;
-    };
 
     const handleSeek = (time: number) => {
         setCurrentTime(time);
@@ -131,11 +117,13 @@ function AudioPlayer() {
     };
 
     return (
-        <div>
+        <div
+            className={`${styles.audioPlayerContainer} ${open ? styles.open : ""} bg-charcoal-blue`}
+            onClick={toggleOpen}>
             <audio
                 src={currentTrack?.url}
                 title={currentTrack?.title}
-                controls
+                // controls
                 ref={audioRef}
                 onLoadedMetadata={onLoadedMetadata}
                 onTimeUpdate={onTimeUpdate}
@@ -146,21 +134,26 @@ function AudioPlayer() {
                 Your browser does not support the audio element.
             </audio>
 
-            <SourceList sources={queue} currentSource={currentTrack} />
+            <div className={styles.trackInfo}>
+                <h2>{currentTrack?.title ?? "Ingen podd tillgänglig"}</h2>
+                <h3>{currentTrack?.artist}</h3>
+            </div>
+
+            {/* <SourceList sources={queue} currentSource={currentTrack} /> */}
+
+            <AudioControls
+                currentTime={currentTime}
+                duration={duration}
+                isPlaying={isPlaying}
+                onTogglePlay={togglePlay}
+                onNext={nextAudioSource}
+                onPrevious={previousAudioSource}
+            />
 
             <ProgressBar
                 currentTime={currentTime}
                 duration={duration}
                 onSeek={handleSeek}
-            />
-
-            <AudioControls
-                isPlaying={isPlaying}
-                onTogglePlay={togglePlay}
-                onSkipForward={() => skipforward(10)}
-                onSkipBackward={() => skipBackward(10)}
-                onNext={nextAudioSource}
-                onPrevious={previousAudioSource}
             />
 
             <VolumeControl

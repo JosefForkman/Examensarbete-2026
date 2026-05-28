@@ -1,10 +1,12 @@
 import { faVolumeHigh } from "@fortawesome/free-solid-svg-icons/faVolumeHigh";
 import { volumeControlStates } from "@/types/AudioPlayer";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faVolumeMedium } from "@fortawesome/free-solid-svg-icons/faVolumeMedium";
-import { faVolumeLow } from "@fortawesome/free-solid-svg-icons/faVolumeLow";
-import { faVolumeMute } from "@fortawesome/free-solid-svg-icons/faVolumeMute";
 import Button from "../Button";
+import {
+    faVolumeLow,
+    faVolumeMedium,
+    faVolumeMute,
+} from "@fortawesome/free-solid-svg-icons";
+import styles from "./AudioPlayer.module.css";
 
 type VolumeControlProps = {
     volume: number;
@@ -37,7 +39,7 @@ function VolumeControl({
     };
 
     return (
-        <div className="volume-control">
+        <div className={styles.VolumeControl}>
             <input
                 type="range"
                 min="0"
@@ -52,6 +54,7 @@ function VolumeControl({
             <Button
                 Icon={getVolumeIcon()}
                 Variant="IconOnly"
+                Size="2x"
                 aria-label="Toggle Mute"
                 onClick={onToggleMute}
             />

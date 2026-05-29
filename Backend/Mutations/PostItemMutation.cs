@@ -2,6 +2,10 @@
 using Backend.Models;
 using Backend.Service;
 using Backend.Types.PostItem;
+using Backend.Validation.PostItemValidations;
+using FluentValidation;
+using System.ComponentModel.DataAnnotations;
+using ValidationException = Backend.Exception.ValidationException;
 
 namespace Backend.Mutations
 {
@@ -18,6 +22,16 @@ namespace Backend.Mutations
             if (website == null)
             {
                 throw new System.Exception($"Website with URL '{input.WebsiteUrl}' not found.");
+            }
+
+            IValidator<CreatePostItemInput> Validator = new CreatePostItemInputValidation();
+
+            var validationResult =
+            await Validator.ValidateAsync(input, options => options.IncludeRuleSets("Create"));
+
+            if (!validationResult.IsValid)
+            {
+                throw new ValidationException($"Validation failed for CreatePostItemInput {validationResult.Errors.Select(e => e.ErrorMessage)}");
             }
 
             // Add validation to Check if a post item with same title and publication date already exists for the website
@@ -79,6 +93,16 @@ namespace Backend.Mutations
             if (website == null)
             {
                 throw new System.Exception($"Website with URL '{input.WebsiteUrl}' not found.");
+            }
+
+            IValidator<UpdatePostItemInput> Validator = new UpdatePostItemInputValidation();
+
+            var validationResult =
+            await Validator.ValidateAsync(input, options => options.IncludeRuleSets("Update"));
+
+            if (!validationResult.IsValid)
+            {
+                throw new ValidationException($"Validation failed for UpdatePostItemInput {validationResult.Errors.Select(e => e.ErrorMessage)}");
             }
 
             postItem.Title = input.Title;

@@ -2,6 +2,9 @@
 using Backend.Models;
 using Backend.Service;
 using Backend.Types.Watched;
+using Backend.Validation.WatchedValidations;
+using FluentValidation;
+using ValidationException = Backend.Exception.ValidationException;
 
 namespace Backend.Mutations
 {
@@ -13,6 +16,15 @@ namespace Backend.Mutations
         public async Task<CreateWatchedPayload> CreateWatched(CreateWatchedInput input, [Service] GenericService<Watched> watchedService,
             [Service] UserService userService, [Service] PostItemService postItemService)
         {
+            IValidator<CreateWatchedInput> validator = new CreateWatchedInputValidation();
+
+            var validationResult = await validator.ValidateAsync(input, options => options.IncludeRuleSets("Create"));
+
+            if(validationResult != null)
+            {
+                throw new ValidationException($"Validation failed for CreateWatchedInput {validationResult.Errors.Select(e => e.ErrorMessage)}");
+            }
+
             var existingUser = await userService.GetUserById(input.UserId);
 
             if (existingUser == null)
@@ -63,6 +75,15 @@ namespace Backend.Mutations
         public async Task<UpdateWatchedPayload> UpdateWatched(int id, UpdateWatchedInput input, [Service] GenericService<Watched> watchedService,
             [Service] UserService userService, [Service] GenericService<Website> websiteService)
         {
+            IValidator<UpdateWatchedInput> validator = new UpdateWatchedInputValidation();
+
+            var validationResult = await validator.ValidateAsync(input, options => options.IncludeRuleSets("Update"));
+
+            if (validationResult != null)
+            {
+                throw new ValidationException($"Validation failed for UpdateWatchedInput {validationResult.Errors.Select(e => e.ErrorMessage)}");
+            }
+
             var watched = await watchedService.GetByIdAsync(id);
 
             if (watched == null)

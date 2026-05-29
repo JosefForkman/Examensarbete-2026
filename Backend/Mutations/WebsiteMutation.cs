@@ -2,6 +2,9 @@ using Backend.Exception;
 using Backend.Models;
 using Backend.Service;
 using Backend.Types.Website;
+using Backend.Validation.WebsiteValidations;
+using FluentValidation;
+using ValidationException = Backend.Exception.ValidationException;
 
 namespace Backend.Mutations;
 
@@ -12,6 +15,17 @@ public class WebsiteMutation
     public async Task<CreateWebsitePayload> CreateWebsite(CreateWebsiteInput input,
         [Service] IGenericService<Website> websiteService)
     {
+        IValidator<CreateWebsiteInput> Validator = new CreateWebsiteInputValidation();
+
+        var validationResult =
+            await Validator.ValidateAsync(input, options => options.IncludeRuleSets("Create"));
+
+        if (!validationResult.IsValid)
+        {
+            throw new ValidationException(
+                $"Validation failed for CreateWebsiteInput {validationResult.Errors.Select(e => e.ErrorMessage)}");
+        }
+
         var website = new Website
         {
             SiteName = input.SiteName,
@@ -53,6 +67,16 @@ public class WebsiteMutation
         if (website == null)
         {
             throw new NotFoundException("Website", id);
+        }
+
+        IValidator<UpdateWebsiteInput> Validator = new UpdateWebsiteInputValidation();
+
+        var validationResult =
+            await Validator.ValidateAsync(input, options => options.IncludeRuleSets("Update"));
+
+        if(validationResult != null)
+        {
+            throw new ValidationException($"Validation failed for UpdateWebsiteInput {validationResult.Errors.Select(e => e.ErrorMessage)}");
         }
 
         website.SiteName = input.SiteName;

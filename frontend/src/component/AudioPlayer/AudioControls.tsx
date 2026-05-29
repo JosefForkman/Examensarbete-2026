@@ -11,6 +11,8 @@ type AudioControlsProps = {
     isPlaying: boolean;
     currentTime: number;
     duration: number;
+    hasPrevious: boolean;
+    hasNext: boolean;
     onTogglePlay: () => void;
     onNext: () => void;
     onPrevious: () => void;
@@ -18,6 +20,8 @@ type AudioControlsProps = {
 
 function AudioControls({
     isPlaying,
+    hasPrevious,
+    hasNext,
     onTogglePlay,
     onNext,
     onPrevious,
@@ -44,7 +48,7 @@ function AudioControls({
                     Size="2x"
                     Icon={faBackwardStep}
                     onClick={onPrevious}
-                    disabled={currentTime < 5}
+                    disabled={!hasPrevious}
                 />
                 <Button
                     Variant="IconOnly"
@@ -57,7 +61,7 @@ function AudioControls({
                     Size="2x"
                     Icon={faForwardStep}
                     onClick={onNext}
-                    disabled={currentTime >= duration - 5}
+                    disabled={!hasNext}
                 />
             </div>
             <span>

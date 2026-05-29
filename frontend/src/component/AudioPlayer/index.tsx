@@ -24,6 +24,12 @@ function AudioPlayer() {
         volumeControlStates.HIGH,
     );
 
+    const currentIndex = queue.findIndex(
+        (track) => track.id === currentTrack?.id,
+    );
+    const hasPrevious = currentIndex > 0;
+    const hasNext = currentIndex < queue.length - 1;
+
     const toggleOpen = () => {
         setOpen((prev) => !prev);
     };
@@ -81,13 +87,22 @@ function AudioPlayer() {
     };
 
     const nextAudioSource = () => {
-        setCurrentTrack(queue[0]);
+        if (queue.length === 1) {
+            setCurrentTrack(queue[0]);
+        }
+
+        setCurrentTrack(queue[currentIndex + 1]);
+
         setCurrentTime(0);
         setDuration(0);
         setIsPlaying(false);
     };
     const previousAudioSource = () => {
-        setCurrentTrack(queue[0]);
+        if (queue.length === 1) {
+            setCurrentTrack(queue[0]);
+        }
+        setCurrentTrack(queue[currentIndex - 1]);
+
         setCurrentTime(0);
         setDuration(0);
         setIsPlaying(false);
@@ -152,6 +167,8 @@ function AudioPlayer() {
                 currentTime={currentTime}
                 duration={duration}
                 isPlaying={isPlaying}
+                hasNext={hasNext}
+                hasPrevious={hasPrevious}
                 onTogglePlay={togglePlay}
                 onNext={nextAudioSource}
                 onPrevious={previousAudioSource}

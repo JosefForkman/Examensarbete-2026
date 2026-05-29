@@ -12,12 +12,89 @@ namespace RSSFeedReader
     {
         static async Task Main(string[] args)
         {
-            using var reader = XmlReader.Create("https://feeds.megaphone.fm/FSI1483080183");
-            var feed = SyndicationFeed.Load(reader);
+            await SavePostItemsForEachWebsite();
+        }
 
-            //LogFeedStructure(feed, "debug_feed_structure.txt");
-            //await UpdateItemsInDatabase(feed);
-            await SaveItemsToDatabase(feed);
+        public static async Task SavePostItemsForEachWebsite()
+        {
+            var httpClient = new HttpClient();
+            var endpoint = "https://localhost:7095/graphql";
+            var pages = 1;
+            string? currentCursor = null;
+            bool pagesNotCounted = true;
+
+            for (int i = 0; i < pages; i++)
+            {
+
+                var requestBodyGet = new
+                {
+                    query = @"
+                        query GetWebsites($after: String){
+                          websites(first: 50), after: $after {
+                            nodes {
+                              name
+                              rSSUrl
+                            }
+                            pageInfo {
+                              endCursor
+                            }
+                            totalCount
+                          }
+                        }",
+
+                    variables = new
+                    {
+                        after = currentCursor
+                    }
+                };
+
+                var contentGet = new StringContent(
+                    System.Text.Json.JsonSerializer.Serialize(requestBodyGet),
+                    System.Text.Encoding.UTF8,
+                    "application/json"
+                );
+
+                var existingItemsResponse = await httpClient.PostAsync(endpoint, contentGet);
+
+                if (!existingItemsResponse.IsSuccessStatusCode)
+                {
+                    string errorResponse = await existingItemsResponse.Content.ReadAsStringAsync();
+                    Console.WriteLine($"GraphQL Server Error: {errorResponse}");
+                    return;
+                }
+
+                var existingItemsContent = await existingItemsResponse.Content.ReadAsStringAsync();
+
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+                var jsonDoc = JsonNode.Parse(existingItemsContent);
+
+                int totalCount = jsonDoc?["data"]?["websites"]?["totalCount"]?.GetValue<int>() ?? 0;
+
+                if (pagesNotCounted)
+                {
+                    pages = (int)Math.Ceiling((double)totalCount / 50);
+                    pagesNotCounted = false;
+                }
+
+                var postItemsJson = jsonDoc?["data"]?["websites"]?["nodes"];
+
+                string? nextCursor = jsonDoc?["data"]?["websites"]?["pageInfo"]?["endCursor"]?.GetValue<string>();
+
+                currentCursor = nextCursor;
+
+                var existingItems = postItemsJson.Deserialize<List<Website>>(options) ?? new List<Website>();
+
+                foreach (var website in existingItems)
+                {
+                    using var reader = XmlReader.Create(website.RSSUrl);
+                    var feed = SyndicationFeed.Load(reader);
+
+                    //LogFeedStructure(feed, "debug_feed_structure.txt");
+                    //await UpdateItemsInDatabase(feed);
+                    await SaveItemsToDatabase(feed);
+                }
+            }
         }
 
         public static async Task UpdateItemsInDatabase(SyndicationFeed feed)
@@ -26,8 +103,9 @@ namespace RSSFeedReader
             var endpoint = "https://localhost:7095/graphql";
             var pages = 1;
             string? currentCursor = null;
+            bool pagesNotCounted = true;
 
-            for(int i = 0; i<pages; i++)
+            for (int i = 0; i<pages; i++)
             {
                 var requestBodyGet = new
                 {
@@ -75,9 +153,10 @@ namespace RSSFeedReader
 
                 int totalCount = jsonDoc?["data"]?["postItems"]?["totalCount"]?.GetValue<int>() ?? 0;
 
-                if (pages == 1)
+                if (pagesNotCounted)
                 {
                     pages = (int)Math.Ceiling((double)totalCount / 50);
+                    pagesNotCounted = false;
                 }
 
                 var postItemsJson = jsonDoc?["data"]?["postItems"]?["nodes"];
@@ -165,6 +244,7 @@ namespace RSSFeedReader
             var pages = 1;
             string? currentCursor = null;
             var existingItems = new List<PostItem>();
+            bool pagesNotCounted = true;
 
             for (int i = 0; i<pages; i++)
             {
@@ -214,9 +294,10 @@ namespace RSSFeedReader
 
                 int totalCount = jsonDoc?["data"]?["postItems"]?["totalCount"]?.GetValue<int>() ?? 0;
 
-                if (pages == 1)
+                if (pagesNotCounted)
                 {
                     pages = (int)Math.Ceiling((double)totalCount / 50);
+                    pagesNotCounted = false;
                 }
 
                 var postItemsJson = jsonDoc?["data"]?["postItems"]?["nodes"];
@@ -349,6 +430,17 @@ namespace RSSFeedReader
             public DateTime PublicationDate { get; set; }
             public string PostId { get; set; } = string.Empty; // Unique identifier for the post, can be used to prevent duplicates
             public int WebsiteId { get; set; }
+        }
+
+        public class Website
+        {
+            [Key]
+            public int Id { get; set; }
+            public string SiteName { get; set; } = string.Empty;
+            [Url]
+            public string RSSUrl { get; set; } = string.Empty;
+            [Url]
+            public string SiteUrl { get; set; } = string.Empty;
         }
     }
 }

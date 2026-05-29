@@ -18,7 +18,8 @@ public static class WebsiteQuery
         {
             Id = website.Id,
             Name = website.SiteName,
-            Url = website.SiteUrl
+            Url = website.SiteUrl,
+            RSSUrl = website.RSSUrl,
         });
     }
     
@@ -35,7 +36,8 @@ public static class WebsiteQuery
         {
             Id = website.Id,
             Name = website.SiteName,
-            Url = website.SiteUrl
+            Url = website.SiteUrl,
+            RSSUrl = website.RSSUrl,
         };
     }
 }

@@ -21,8 +21,8 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
             return;
         }
 
-        // Otherwise, add the track to the end of the queue
-        setQueue((prev) => [...prev, track]);
+        // Otherwise, add the track to the beginning of the queue
+        setQueue((prev) => [track, ...prev]);
     };
 
     const selectTrack = (track: AudioTrack) => {
@@ -39,9 +39,12 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
             (queueTrack) => queueTrack.id === track.id,
         );
 
+        // If the track is already in the queue, do nothing
         if (isInQueue) {
             return;
         }
+
+        // Otherwise, add the track to the beginning of the queue
         setQueue((prev) => [track, ...prev]);
     };
 

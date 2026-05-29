@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import AudioControls from "./AudioControls";
 import { volumeControlStates } from "@/types/AudioPlayer";
@@ -34,7 +34,7 @@ function AudioPlayer() {
         setOpen((prev) => !prev);
     };
 
-    const togglePlay = () => {
+    const togglePlay = useCallback(() => {
         const audio = audioRef.current;
         if (!audio || audio.src === "") {
             return;
@@ -46,14 +46,12 @@ function AudioPlayer() {
         }
         audio.play();
         setIsPlaying(true);
-    };
+    }, [isPlaying]);
     const onVolumeChange = () => {
         const audio = audioRef.current;
         if (!audio) {
             return;
         }
-
-        console.log("Volume begin chance");
 
         if (audio.muted) {
             return;
@@ -132,6 +130,16 @@ function AudioPlayer() {
             setVolumeState(() => volumeControlStates.OFF);
         }
     };
+
+    // Auto-play the current track when it changes
+    useEffect(() => {
+        const audio = audioRef.current;
+        if (!audio || audio.src === "") {
+            return;
+        }
+
+        audio.play();
+    }, [currentTrack]);
 
     return (
         <div

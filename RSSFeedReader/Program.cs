@@ -12,8 +12,57 @@ namespace RSSFeedReader
     {
         static async Task Main(string[] args)
         {
-            await SavePostItemsForEachWebsite();
+            using var cts = new CancellationTokenSource();
+
+            Console.CancelKeyPress += (sender, eventArgs) =>
+            {
+                eventArgs.Cancel = true;
+
+                cts.Cancel();
+            };
+
+            try
+            {
+                await Run(cts.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                // Detta fångas om metoden avbröts snyggt under en fördröjning
+                Console.WriteLine("Applikationen stängdes av kontrollerat.");
+            }
         }
+
+        static async Task Run(CancellationToken stoppingToken)
+        {
+            DateTime nu = DateTime.Now;
+
+            DateTime nastaKorning = new DateTime(nu.Year, nu.Month, nu.Day, 12, 0, 0);
+
+            if (nu > nastaKorning)
+            {
+                nastaKorning = nastaKorning.AddDays(1);
+            }
+
+            TimeSpan initialFordrojning = nastaKorning - nu;
+
+            try
+            {
+                await Task.Delay(initialFordrojning, stoppingToken);
+            }
+            catch (OperationCanceledException)
+            {
+                return;
+            }
+
+            using PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromDays(1));
+
+            do
+            {
+                await SavePostItemsForEachWebsite();
+            }
+            while (await timer.WaitForNextTickAsync(stoppingToken));
+        }
+
 
         public static async Task SavePostItemsForEachWebsite()
         {

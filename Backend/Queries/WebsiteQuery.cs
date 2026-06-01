@@ -8,7 +8,7 @@ namespace Backend.Queries;
 [QueryType]
 public static class WebsiteQuery
 {
-    [UsePaging]
+    [UsePaging(IncludeTotalCount = true)]
     [UseProjection]
     [UseFiltering]
     [UseSorting]

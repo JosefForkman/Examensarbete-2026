@@ -8,7 +8,7 @@ namespace Backend.Queries;
 [QueryType]
 public static class WebsiteQuery
 {
-    [UsePaging]
+    [UsePaging(IncludeTotalCount = true)]
     [UseProjection]
     [UseFiltering]
     [UseSorting]
@@ -18,7 +18,8 @@ public static class WebsiteQuery
         {
             Id = website.Id,
             Name = website.SiteName,
-            Url = website.SiteUrl
+            Url = website.SiteUrl,
+            RSSUrl = website.RSSUrl,
         });
     }
     
@@ -35,7 +36,8 @@ public static class WebsiteQuery
         {
             Id = website.Id,
             Name = website.SiteName,
-            Url = website.SiteUrl
+            Url = website.SiteUrl,
+            RSSUrl = website.RSSUrl,
         };
     }
 }

@@ -12,12 +12,137 @@ namespace RSSFeedReader
     {
         static async Task Main(string[] args)
         {
-            using var reader = XmlReader.Create("https://feeds.megaphone.fm/FSI1483080183");
-            var feed = SyndicationFeed.Load(reader);
+            using var cts = new CancellationTokenSource();
 
-            //LogFeedStructure(feed, "debug_feed_structure.txt");
-            //await UpdateItemsInDatabase(feed);
-            await SaveItemsToDatabase(feed);
+            Console.CancelKeyPress += (sender, eventArgs) =>
+            {
+                eventArgs.Cancel = true;
+
+                cts.Cancel();
+            };
+
+            try
+            {
+                await Run(cts.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                Console.WriteLine("¨The application was shutdown in a controlled manner.");
+            }
+        }
+
+        static async Task Run(CancellationToken stoppingToken)
+        {
+            var now = DateTime.Now;
+
+            var nextRunTime = new DateTime(now.Year, now.Month, now.Day, 12, 0, 0);
+
+            if (now > nextRunTime)
+            {
+                nextRunTime = nextRunTime.AddDays(1);
+            }
+
+            var initialDelay = nextRunTime - now;
+
+            try
+            {
+                await Task.Delay(initialDelay, stoppingToken);
+            }
+            catch (OperationCanceledException)
+            {
+                return;
+            }
+
+            using var timer = new PeriodicTimer(TimeSpan.FromDays(1));
+
+            do
+            {
+                await SavePostItemsForEachWebsite();
+            }
+            while (await timer.WaitForNextTickAsync(stoppingToken));
+        }
+
+
+        public static async Task SavePostItemsForEachWebsite()
+        {
+            var httpClient = new HttpClient();
+            var endpoint = "https://localhost:7095/graphql";
+            var pages = 1;
+            string? currentCursor = null;
+            var pagesNotCounted = true;
+
+            for (int i = 0; i < pages; i++)
+            {
+
+                var requestBodyGet = new
+                {
+                    query = @"
+                        query GetWebsites($after: String){
+                          websites(first: 50), after: $after {
+                            nodes {
+                              name
+                              rSSUrl
+                            }
+                            pageInfo {
+                              endCursor
+                            }
+                            totalCount
+                          }
+                        }",
+
+                    variables = new
+                    {
+                        after = currentCursor
+                    }
+                };
+
+                var contentGet = new StringContent(
+                    JsonSerializer.Serialize(requestBodyGet),
+                    Encoding.UTF8,
+                    "application/json"
+                );
+
+                var existingItemsResponse = await httpClient.PostAsync(endpoint, contentGet);
+
+                if (!existingItemsResponse.IsSuccessStatusCode)
+                {
+                    var errorResponse = await existingItemsResponse.Content.ReadAsStringAsync();
+                    Console.WriteLine($"GraphQL Server Error: {errorResponse}");
+                    return;
+                }
+
+                var existingItemsContent = await existingItemsResponse.Content.ReadAsStringAsync();
+
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+                var jsonDoc = JsonNode.Parse(existingItemsContent);
+
+                var totalCount = jsonDoc?["data"]?["websites"]?["totalCount"]?.GetValue<int>() ?? 0;
+
+                if (pagesNotCounted)
+                {
+                    pages = (int)Math.Ceiling((double)totalCount / 50);
+                    pagesNotCounted = false;
+                }
+
+                var postItemsJson = jsonDoc?["data"]?["websites"]?["nodes"];
+
+                var nextCursor = jsonDoc?["data"]?["websites"]?["pageInfo"]?["endCursor"]?.GetValue<string>();
+
+                currentCursor = nextCursor;
+
+                var existingItems = postItemsJson.Deserialize<List<Website>>(options) ?? new List<Website>();
+
+                foreach (var website in existingItems)
+                {
+                    using var reader = XmlReader.Create(website.RSSUrl);
+                    var feed = SyndicationFeed.Load(reader);
+
+                    //LogFeedStructure(feed, "debug_feed_structure.txt");
+                    //await UpdateItemsInDatabase(feed);
+                    await SaveItemsToDatabase(feed);
+                }
+            }
         }
 
         public static async Task UpdateItemsInDatabase(SyndicationFeed feed)
@@ -26,8 +151,9 @@ namespace RSSFeedReader
             var endpoint = "https://localhost:7095/graphql";
             var pages = 1;
             string? currentCursor = null;
+            var pagesNotCounted = true;
 
-            for(int i = 0; i<pages; i++)
+            for (int i = 0; i<pages; i++)
             {
                 var requestBodyGet = new
                 {
@@ -53,8 +179,8 @@ namespace RSSFeedReader
                 };
 
                 var contentGet = new StringContent(
-                    System.Text.Json.JsonSerializer.Serialize(requestBodyGet),
-                    System.Text.Encoding.UTF8,
+                    JsonSerializer.Serialize(requestBodyGet),
+                    Encoding.UTF8,
                     "application/json"
                 );
 
@@ -73,16 +199,17 @@ namespace RSSFeedReader
 
                 var jsonDoc = JsonNode.Parse(existingItemsContent);
 
-                int totalCount = jsonDoc?["data"]?["postItems"]?["totalCount"]?.GetValue<int>() ?? 0;
+                var totalCount = jsonDoc?["data"]?["postItems"]?["totalCount"]?.GetValue<int>() ?? 0;
 
-                if (pages == 1)
+                if (pagesNotCounted)
                 {
                     pages = (int)Math.Ceiling((double)totalCount / 50);
+                    pagesNotCounted = false;
                 }
 
                 var postItemsJson = jsonDoc?["data"]?["postItems"]?["nodes"];
 
-                string? nextCursor = jsonDoc?["data"]?["postItems"]?["pageInfo"]?["endCursor"]?.GetValue<string>();
+                var nextCursor = jsonDoc?["data"]?["postItems"]?["pageInfo"]?["endCursor"]?.GetValue<string>();
 
                 currentCursor = nextCursor;
 
@@ -165,6 +292,7 @@ namespace RSSFeedReader
             var pages = 1;
             string? currentCursor = null;
             var existingItems = new List<PostItem>();
+            var pagesNotCounted = true;
 
             for (int i = 0; i<pages; i++)
             {
@@ -192,8 +320,8 @@ namespace RSSFeedReader
                 };
 
                 var contentGet = new StringContent(
-                    System.Text.Json.JsonSerializer.Serialize(requestBodyGet),
-                    System.Text.Encoding.UTF8,
+                    JsonSerializer.Serialize(requestBodyGet),
+                    Encoding.UTF8,
                     "application/json"
                 );
 
@@ -212,16 +340,17 @@ namespace RSSFeedReader
 
                 var jsonDoc = JsonNode.Parse(existingItemsContent);
 
-                int totalCount = jsonDoc?["data"]?["postItems"]?["totalCount"]?.GetValue<int>() ?? 0;
+                var totalCount = jsonDoc?["data"]?["postItems"]?["totalCount"]?.GetValue<int>() ?? 0;
 
-                if (pages == 1)
+                if (pagesNotCounted)
                 {
                     pages = (int)Math.Ceiling((double)totalCount / 50);
+                    pagesNotCounted = false;
                 }
 
                 var postItemsJson = jsonDoc?["data"]?["postItems"]?["nodes"];
 
-                string? nextCursor = jsonDoc?["data"]?["postItems"]?["pageInfo"]?["endCursor"]?.GetValue<string>();
+                var nextCursor = jsonDoc?["data"]?["postItems"]?["pageInfo"]?["endCursor"]?.GetValue<string>();
 
                 currentCursor = nextCursor;
 
@@ -282,7 +411,7 @@ namespace RSSFeedReader
                 };
 
                 var content = new StringContent(
-                    System.Text.Json.JsonSerializer.Serialize(requestBody),
+                    JsonSerializer.Serialize(requestBody),
                     Encoding.UTF8,
                     "application/json"
                 );
@@ -349,6 +478,17 @@ namespace RSSFeedReader
             public DateTime PublicationDate { get; set; }
             public string PostId { get; set; } = string.Empty; // Unique identifier for the post, can be used to prevent duplicates
             public int WebsiteId { get; set; }
+        }
+
+        public class Website
+        {
+            [Key]
+            public int Id { get; set; }
+            public string SiteName { get; set; } = string.Empty;
+            [Url]
+            public string RSSUrl { get; set; } = string.Empty;
+            [Url]
+            public string SiteUrl { get; set; } = string.Empty;
         }
     }
 }

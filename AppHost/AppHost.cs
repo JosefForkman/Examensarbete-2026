@@ -12,6 +12,10 @@ var backend = builder.AddProject<Projects.Backend>("backend")
     .WithReference(db)
     .WaitFor(db);
 
+var rssFeedReader = builder.AddProject<Projects.RSSFeedReader>("rss-feed-reader")
+    .WithReference(db)
+    .WaitFor(db)
+    .WaitFor(backend);
 
 #pragma warning disable ASPIREJAVASCRIPT001
 builder.AddNextJsApp("frontend", "../frontend")

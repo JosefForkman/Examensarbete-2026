@@ -465,7 +465,7 @@ namespace RSSFeedReader
             File.WriteAllText(filePath, sb.ToString(), Encoding.UTF8);
         }
 
-        public class PostItem
+        private class PostItem
         {
             [Key]
             public int Id { get; set; }
@@ -480,7 +480,7 @@ namespace RSSFeedReader
             public int WebsiteId { get; set; }
         }
 
-        public class Website
+        private class Website
         {
             [Key]
             public int Id { get; set; }

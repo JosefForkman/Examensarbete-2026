@@ -27,26 +27,26 @@ namespace RSSFeedReader
             }
             catch (OperationCanceledException)
             {
-                Console.WriteLine("Applikationen stängdes av kontrollerat.");
+                Console.WriteLine("The application was turned off in a controlled manner");
             }
         }
 
-        static async Task Run(CancellationToken stoppingToken)
+        static async Task Run(CancellationToken cancellationToken)
         {
-            DateTime nu = DateTime.Now;
+            DateTime now = DateTime.Now;
 
-            DateTime nastaKorning = new DateTime(nu.Year, nu.Month, nu.Day, 12, 0, 0);
+            DateTime nextRunTime = new DateTime(now.Year, now.Month, now.Day, 12, 0, 0);
 
-            if (nu > nastaKorning)
+            if (now > nextRunTime)
             {
-                nastaKorning = nastaKorning.AddDays(1);
+                nextRunTime = nextRunTime.AddDays(1);
             }
 
-            TimeSpan initialFordrojning = nastaKorning - nu;
+            TimeSpan firstDelay = nextRunTime - now;
 
             try
             {
-                await Task.Delay(initialFordrojning, stoppingToken);
+                await Task.Delay(firstDelay, cancellationToken);
             }
             catch (OperationCanceledException)
             {
@@ -59,7 +59,7 @@ namespace RSSFeedReader
             {
                 await SavePostItemsForEachWebsite();
             }
-            while (await timer.WaitForNextTickAsync(stoppingToken));
+            while (await timer.WaitForNextTickAsync(cancellationToken));
         }
 
 

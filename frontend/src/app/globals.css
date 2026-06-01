@@ -29,14 +29,27 @@
 body {
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr auto;
-    background-color: var(--slate-gray);
+    grid-template-rows: auto 1fr auto auto;
+    background: hsla(from var(--slate-gray) h s l / 0.6) url(/background.jpg)
+        no-repeat center center fixed;
+    background-blend-mode: darken;
+    background-size: cover;
     color: var(--ash-grey);
 
     min-height: 100vh;
 
     @media screen and (width >= 768px) {
         grid-template-columns: auto 1fr;
+        grid-template-rows: auto 1fr auto;
+    }
+}
+
+main {
+    grid-row: 2 / 3;
+
+    @media screen and (width >= 768px) {
+        grid-column: 2 / -1;
+        grid-row: 2 / -3;
     }
 }
 

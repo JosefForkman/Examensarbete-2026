@@ -1,0 +1,45 @@
+.button {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 1rem;
+    background-color: transparent;
+    border: 2px solid var(--ash-grey);
+    border-radius: 0.25em;
+
+    &:hover {
+        border-color: var(--slate-gray);
+    }
+
+    &:active,
+    &:focus,
+    &:focus-visible,
+    &.active {
+        color: var(--straw-gold);
+        background-color: var(--slate-gray);
+        border-color: var(--slate-gray);
+    }
+
+    &:disabled {
+        color: var(--ash-grey);
+        border-color: var(--ash-grey);
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+    &.withIcon {
+        padding: 0.5rem 1rem;
+        background-color: transparent;
+
+    }
+    &.noBorder {
+        border: none;
+        
+        &.active,
+        &:active,
+        &:focus,
+        &:focus-visible
+        {
+            background-color: transparent;
+        }
+    }
+}

@@ -27,8 +27,7 @@ namespace RSSFeedReader
             }
             catch (OperationCanceledException)
             {
-                // Detta fångas om metoden avbröts snyggt under en fördröjning
-                Console.WriteLine("Applikationen stängdes av kontrollerat.");
+                Console.WriteLine("¨The application was shutdown in a controlled manner.");
             }
         }
 

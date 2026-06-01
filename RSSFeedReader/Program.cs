@@ -78,10 +78,10 @@ namespace RSSFeedReader
                 {
                     query = @"
                         query GetWebsites($after: String){
-                          websites(first: 50), after: $after {
+                          websites(first: 50, after: $after) {
                             nodes {
                               name
-                              rSSUrl
+                              rssUrl
                             }
                             pageInfo {
                               endCursor

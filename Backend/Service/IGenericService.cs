@@ -14,7 +14,7 @@ public interface IGenericService<T> where T : class
     /// </summary>
     /// <param name="id">The entity ID.</param>
     /// <returns>The entity if found, otherwise null.</returns>
-    Task<T> GetByIdAsync(int id);
+    Task<T?> GetByIdAsync(int id);
 
     /// <summary>
     /// Creates and saves a new entity in the database.

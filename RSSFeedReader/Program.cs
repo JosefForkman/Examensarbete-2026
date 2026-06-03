@@ -73,15 +73,14 @@ namespace RSSFeedReader
 
             for (int i = 0; i < pages; i++)
             {
-
                 var requestBodyGet = new
                 {
                     query = @"
                         query GetWebsites($after: String){
-                          websites(first: 50), after: $after {
+                          websites(first: 50, after: $after) {
                             nodes {
                               name
-                              rSSUrl
+                              rssUrl
                             }
                             pageInfo {
                               endCursor

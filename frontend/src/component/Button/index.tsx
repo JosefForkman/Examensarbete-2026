@@ -32,7 +32,7 @@ function Button(props: ButtonParams) {
     const { Variant } = props;
 
     if (Variant === "Text") {
-        const { text, className, ...rest } = props;
+        const { text, className, Variant, ...rest } = props;
         return (
             <button className={`${styles.button} ${className || ""}`} {...rest}>
                 {text}

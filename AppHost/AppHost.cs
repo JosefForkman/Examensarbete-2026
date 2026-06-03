@@ -24,4 +24,8 @@ builder.AddNextJsApp("frontend", "../frontend")
     .WithExternalHttpEndpoints();
 #pragma warning restore ASPIREJAVASCRIPT001
 
+builder.AddJavaScriptApp("update-graphql-schema", "../frontend", "updateGraphql")
+    .WithReference(backend)
+    .WaitFor(backend);
+
 builder.Build().Run();

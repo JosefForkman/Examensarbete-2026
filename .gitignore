@@ -23,3 +23,5 @@ Examensarbete-2026.sln.DotSettings.user
 /RSSFeedReader/obj/RSSFeedReader.csproj.nuget.dgspec.json
 /RSSFeedReader/obj/RSSFeedReader.csproj.nuget.g.props
 /RSSFeedReader/obj/RSSFeedReader.csproj.nuget.g.targets
+frontend/schema.graphql
+frontend/src/graphql-env.d.ts

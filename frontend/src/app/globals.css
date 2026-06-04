@@ -30,6 +30,7 @@ body {
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr auto auto;
+    font-family: var(--font-roboto-mono);
     background: hsla(from var(--slate-gray) h s l / 0.6) url(/background.jpg)
         no-repeat center center fixed;
     background-blend-mode: darken;
@@ -51,6 +52,12 @@ main {
         grid-column: 2 / -1;
         grid-row: 2 / -3;
     }
+}
+
+h1,
+h2,
+h3 {
+    font-family: var(--font-iceland-sans);
 }
 
 /* Text Colors */

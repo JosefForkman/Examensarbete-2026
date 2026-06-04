@@ -5,7 +5,7 @@
     background-color: var(--charcoal-blue);
     border-radius: 0.5rem;
     border: 2px solid var(--ash-grey);
-    width: 240px;
+    width: 260px;
 
     img {
         width: 100%;
@@ -45,6 +45,7 @@
         .buttonAndDate {
             display: flex;
             justify-content: space-between;
+            align-items: end;
         }
     }
 }

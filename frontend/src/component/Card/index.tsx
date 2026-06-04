@@ -14,31 +14,35 @@ import utc from "dayjs/plugin/utc";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/sv";
 import { useState } from "react";
+import { FragmentOf, readFragment } from "gql.tada";
+import { cardFragment } from "@/gql/querry/PostItem";
 
 dayjs.extend(utc);
 dayjs.extend(relativeTime);
 dayjs.locale("sv");
 
+
+
 type props = {
-    id: number;
-    title: string;
-    imageUrl: string | null;
-    publicationDate: string;
+    postItem: FragmentOf<typeof cardFragment>;
 };
 
-function Card(postItem: props) {
+export default function Card({ postItem }: props) {
     const [isVavorite, setIsVavorite] = useState(false);
+
+    const data = readFragment(cardFragment, postItem);
 
     const toggleFavorite = () => {
         setIsVavorite((pre) => !pre);
     };
+
     return (
         <div className={styles.card}>
-            {postItem.imageUrl ? (
+            {data.imageUrl ? (
                 <Image
                     width={240}
                     height={240}
-                    src={postItem.imageUrl}
+                    src={data.imageUrl}
                     alt=""
                 />
             ) : (
@@ -53,14 +57,13 @@ function Card(postItem: props) {
                 onClick={toggleFavorite}
             />
             <div className={styles.body}>
-                <h2>{postItem.title}</h2>
+                <h2>{data.name}</h2>
                 <div className={styles.buttonAndDate}>
                     <Button Variant="Text" text="Se kanal" />
-                    <span>{dayjs().to(dayjs(postItem.publicationDate))}</span>
+                    <span>{dayjs().to(dayjs(data.publicationDate))}</span>
                 </div>
             </div>
         </div>
     );
 }
 
-export default Card;

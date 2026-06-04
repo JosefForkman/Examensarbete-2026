@@ -3,19 +3,20 @@ import "@fortawesome/fontawesome-svg-core/styles.css";
 config.autoAddCss = false;
 
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Iceland, Roboto_Mono } from "next/font/google";
 import "./globals.css";
 import Nav from "@/component/Nav";
 import AudioPlayer from "@/component/AudioPlayer";
 import { AudioProvider } from "@/context/AudioContext";
 
-const geistSans = Geist({
-    variable: "--font-geist-sans",
+const iceland = Iceland({
+    variable: "--font-iceland-sans",
     subsets: ["latin"],
+    weight: ["400"],
 });
 
-const geistMono = Geist_Mono({
-    variable: "--font-geist-mono",
+const robotoMono = Roboto_Mono({
+    variable: "--font-roboto-mono",
     subsets: ["latin"],
 });
 
@@ -32,7 +33,7 @@ export default function RootLayout({
     return (
         <html
             lang="en"
-            className={`${geistSans.variable} ${geistMono.variable}`}>
+            className={`${iceland.variable} ${robotoMono.variable}`}>
             <body>
                 <Nav />
                 <AudioProvider>

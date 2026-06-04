@@ -12,6 +12,8 @@
     }
 
     .label {
+        font-family: var(--font-iceland-sans);
+        font-size: 1.5rem;
         transition:
             max-width 0.5s ease,
             opacity 0.5s ease,

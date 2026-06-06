@@ -33,6 +33,8 @@ namespace RSSFeedReader
 
         static async Task Run(CancellationToken stoppingToken)
         {
+            await SavePostItemsForEachWebsite();
+
             var now = DateTime.Now;
 
             var nextRunTime = new DateTime(now.Year, now.Month, now.Day, 12, 0, 0);
@@ -57,7 +59,6 @@ namespace RSSFeedReader
 
             do
             {
-                await SavePostItemsForEachWebsite();
             }
             while (await timer.WaitForNextTickAsync(stoppingToken));
         }
@@ -78,10 +79,10 @@ namespace RSSFeedReader
                 {
                     query = @"
                         query GetWebsites($after: String){
-                          websites(first: 50), after: $after {
+                          websites(first: 50, after: $after) {
                             nodes {
                               name
-                              rSSUrl
+                              rssUrl
                             }
                             pageInfo {
                               endCursor
@@ -140,6 +141,7 @@ namespace RSSFeedReader
 
                     //LogFeedStructure(feed, "debug_feed_structure.txt");
                     //await UpdateItemsInDatabase(feed);
+                    await UpdateWebsitesInDatabase(website, feed);
                     await SaveItemsToDatabase(feed);
                 }
             }
@@ -153,7 +155,7 @@ namespace RSSFeedReader
             string? currentCursor = null;
             var pagesNotCounted = true;
 
-            for (int i = 0; i<pages; i++)
+            for (int i = 0; i < pages; i++)
             {
                 var requestBodyGet = new
                 {
@@ -171,7 +173,7 @@ namespace RSSFeedReader
                             totalCount
                           }
                         }",
-                    
+
                     variables = new
                     {
                         after = currentCursor
@@ -285,6 +287,64 @@ namespace RSSFeedReader
             }
         }
 
+        private static async Task UpdateWebsitesInDatabase(Website website, SyndicationFeed feed)
+        {
+            var httpClient = new HttpClient();
+            var endpoint = "https://localhost:7095/graphql";
+
+            var query = @"
+                mutation ($input: UpdateWebsiteInput!) {
+                    updateWebsite(id: 1, input: $input) {
+                        id
+                    }
+                }
+            ";
+
+            var latestWebsitePubDate = @"
+                query {
+                    postItems(
+                        where: { websiteName: { eq: \"syntax.fm\" } }
+                        order: { publicationDate: DESC }
+                        first: 1
+                    ) {
+                        totalCount
+                        nodes {
+                        publicationDate
+                        }
+                    }
+                }
+            "
+
+            var variables = new
+            {
+                rssUrl = website.RSSUrl,
+                siteName = website.SiteName,
+                siteUrl = website.SiteUrl,
+                imageUrl = feed.ImageUrl,
+                createdAt = "",
+                description = feed.Description,
+            };
+
+            var requestBody = new
+            {
+                query,
+                variables
+            };
+
+            var content = new StringContent(
+                            JsonSerializer.Serialize(requestBody),
+                            Encoding.UTF8,
+                            "application/json"
+                        );
+
+            var httpResponse = await httpClient.PostAsync(endpoint, content);
+
+            if (!httpResponse.IsSuccessStatusCode)
+            {
+                Console.WriteLine(httpResponse.Content.ReadAsStringAsync());
+            }
+        }
+
         public static async Task SaveItemsToDatabase(SyndicationFeed feed)
         {
             var httpClient = new HttpClient();
@@ -294,7 +354,7 @@ namespace RSSFeedReader
             var existingItems = new List<PostItem>();
             var pagesNotCounted = true;
 
-            for (int i = 0; i<pages; i++)
+            for (int i = 0; i < pages; i++)
             {
                 var requestBodyGet = new
                 {
@@ -357,6 +417,7 @@ namespace RSSFeedReader
                 existingItems.AddRange(postItemsJson.Deserialize<List<PostItem>>(options) ?? new List<PostItem>());
             }
 
+            // Create feedItem
             foreach (var item in feed.Items)
             {
                 if (existingItems.Any(existingItem => string.Equals(existingItem.PostId, item.Id, StringComparison.OrdinalIgnoreCase)))
@@ -416,6 +477,7 @@ namespace RSSFeedReader
                     "application/json"
                 );
 
+                // Make request to backend
                 var response = await httpClient.PostAsync(endpoint, content);
                 var responseString = await response.Content.ReadAsStringAsync();
 
@@ -485,10 +547,14 @@ namespace RSSFeedReader
             [Key]
             public int Id { get; set; }
             public string SiteName { get; set; } = string.Empty;
+            public string? Description { get; set; } = null;
             [Url]
             public string RSSUrl { get; set; } = string.Empty;
             [Url]
             public string SiteUrl { get; set; } = string.Empty;
+            [Url]
+            public string? ImageUrl { get; set; } = null;
+            public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         }
     }
 }

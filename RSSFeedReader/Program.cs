@@ -303,7 +303,7 @@ namespace RSSFeedReader
             var latestWebsitePubDate = @"
                 query {
                     postItems(
-                        where: { websiteName: { eq: \"syntax.fm\" } }
+                        where: { websiteName: { eq: 'syntax.fm' } }
                         order: { publicationDate: DESC }
                         first: 1
                     ) {
@@ -313,7 +313,7 @@ namespace RSSFeedReader
                         }
                     }
                 }
-            "
+            ";
 
             var variables = new
             {

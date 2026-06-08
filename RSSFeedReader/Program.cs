@@ -588,7 +588,7 @@ namespace RSSFeedReader
             [Url]
             public string RSSUrl { get; set; } = string.Empty;
             [Url]
-            public string SiteUrl { get; set; } = string.Empty;
+            public string Uri { get; set; } = string.Empty;
         }
         public class LatestWebsitePubDateResponse
         {

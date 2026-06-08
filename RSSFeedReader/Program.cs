@@ -35,8 +35,6 @@ namespace RSSFeedReader
 
         static async Task Run(CancellationToken stoppingToken)
         {
-            await SavePostItemsForEachWebsite();
-
             var now = DateTime.Now;
 
             var nextRunTime = new DateTime(now.Year, now.Month, now.Day, 12, 0, 0);
@@ -61,6 +59,7 @@ namespace RSSFeedReader
 
             do
             {
+                await SavePostItemsForEachWebsite();
             }
             while (await timer.WaitForNextTickAsync(stoppingToken));
         }

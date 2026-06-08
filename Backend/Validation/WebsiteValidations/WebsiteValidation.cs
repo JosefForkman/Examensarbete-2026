@@ -26,6 +26,14 @@ public class WebsiteValidation : AbstractValidator<Website>
                 .WithMessage("RSS URL is required.")
                 .Must(uri => Uri.IsWellFormedUriString(uri, UriKind.Absolute))
                 .WithMessage("RSS URL must be a valid absolute URI.");
+
+            RuleFor(website => website.ImageUrl)
+                    .Must(uri => Uri.IsWellFormedUriString(uri, UriKind.Absolute))
+                    .When(input => string.IsNullOrEmpty(input.ImageUrl))
+                    .WithMessage("ImageUrl must be a valid absolute URI.");
+
+            RuleFor(website => website.CreatedAt).LessThanOrEqualTo(DateTime.Now)
+                .WithMessage("CreatedAt cannot be in the future.");
         });
 
         RuleSet("Update", () =>
@@ -41,6 +49,14 @@ public class WebsiteValidation : AbstractValidator<Website>
             RuleFor(website => website.RSSUrl)
                 .Must(uri => Uri.IsWellFormedUriString(uri, UriKind.Absolute))
                 .When(website => !string.IsNullOrEmpty(website.RSSUrl));
+
+            RuleFor(website => website.ImageUrl)
+                    .Must(uri => Uri.IsWellFormedUriString(uri, UriKind.Absolute))
+                    .When(input => string.IsNullOrEmpty(input.ImageUrl))
+                    .WithMessage("ImageUrl must be a valid absolute URI.");
+
+            RuleFor(website => website.CreatedAt).LessThanOrEqualTo(DateTime.Now)
+                .WithMessage("CreatedAt cannot be in the future.");
         });
     }
 }

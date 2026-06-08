@@ -29,8 +29,11 @@ public class WebsiteMutation
         var website = new Website
         {
             SiteName = input.SiteName,
+            Description = input.Description,
             RSSUrl = input.RSSUrl,
-            SiteUrl = input.SiteUrl
+            SiteUrl = input.SiteUrl,
+            ImageUrl = input.ImageUrl,
+            CreatedAt = input.CreatedAt,
         };
 
         var createdWebsite = await websiteService.CreateAsync(website);
@@ -39,7 +42,10 @@ public class WebsiteMutation
         {
             Id = createdWebsite.Id,
             Name = createdWebsite.SiteName,
-            Url = createdWebsite.SiteUrl
+            Description = createdWebsite.Description,
+            Url = createdWebsite.SiteUrl,
+            ImageUrl = createdWebsite.ImageUrl,
+            lastPublicationDate = input.CreatedAt,
         };
     }
 
@@ -60,7 +66,8 @@ public class WebsiteMutation
 
     [Error<NotFoundException>]
     //[Error<AggregateException>]
-    public async Task<UpdateWebsitePayload> UpdateWebsite(int id, UpdateWebsiteInput input, [Service] IGenericService<Website> websiteService)
+    public async Task<UpdateWebsitePayload> UpdateWebsite(int id, UpdateWebsiteInput input,
+        [Service] IGenericService<Website> websiteService)
     {
         var website = await websiteService.GetByIdAsync(id);
 
@@ -74,14 +81,18 @@ public class WebsiteMutation
         var validationResult =
             await Validator.ValidateAsync(input, options => options.IncludeRuleSets("Update"));
 
-        if(validationResult != null)
+        if (!validationResult.IsValid)
         {
-            throw new ValidationException($"Validation failed for UpdateWebsiteInput {validationResult.Errors.Select(e => e.ErrorMessage)}");
+            throw new ValidationException(
+                $"Validation failed for UpdateWebsiteInput {validationResult.Errors.Select(e => e.ErrorMessage)}");
         }
 
         website.SiteName = input.SiteName;
+        website.Description = input.Description;
         website.RSSUrl = input.RSSUrl;
         website.SiteUrl = input.SiteUrl;
+        website.ImageUrl = input.ImageUrl;
+        website.CreatedAt = input.CreatedAt;
 
         var updatedWebsite = await websiteService.UpdateAsync(website);
 
@@ -89,7 +100,10 @@ public class WebsiteMutation
         {
             Id = updatedWebsite.Id,
             SiteName = updatedWebsite.SiteName,
-            SiteUrl = updatedWebsite.SiteUrl
+            Description = updatedWebsite.Description,
+            SiteUrl = updatedWebsite.SiteUrl,
+            ImageUrl = updatedWebsite.ImageUrl,
+            CreatedAt = updatedWebsite.CreatedAt,
         };
     }
 }

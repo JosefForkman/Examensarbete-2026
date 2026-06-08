@@ -10,10 +10,20 @@ namespace Backend.Validation.WebsiteValidations
             RuleSet("Update", () =>
             {
                 RuleFor(input => input.SiteName).NotEmpty().WithMessage("SiteName is required.");
+
                 RuleFor(input => input.RSSUrl).NotEmpty().WithMessage("RSSUrl is required.")
                     .Must(uri => Uri.IsWellFormedUriString(uri, UriKind.Absolute)).WithMessage("RSSUrl must be a valid URL.");
+
                 RuleFor(input => input.SiteUrl).NotEmpty().WithMessage("SiteUrl is required.")
                     .Must(uri => Uri.IsWellFormedUriString(uri, UriKind.Absolute)).WithMessage("SiteUrl must be a valid URL.");
+
+                RuleFor(website => website.ImageUrl)
+                    .Must(uri => Uri.IsWellFormedUriString(uri, UriKind.Absolute))
+                    .When(input => string.IsNullOrEmpty(input.ImageUrl))
+                    .WithMessage("ImageUrl must be a valid absolute URI.");
+
+                RuleFor(website => website.CreatedAt).LessThanOrEqualTo(DateTime.Now)
+                    .WithMessage("CreatedAt cannot be in the future.");
             });
         }
     }

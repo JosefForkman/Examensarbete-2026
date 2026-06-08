@@ -16,10 +16,12 @@ namespace Backend.Validation.WebsiteValidations
                 RuleFor(input => input.SiteUrl).NotEmpty().WithMessage("SiteUrl is required.")
                     .Must(uri => Uri.IsWellFormedUriString(uri, UriKind.Absolute))
                     .WithMessage("SiteUrl must be a valid URL.");
-                RuleFor(input => input.ImageUrl).Must(uri => Uri.IsWellFormedUriString(uri, UriKind.Absolute))
-                    .WithMessage("ImageUrl must be a valid URL.");
-                RuleFor(input => input.CreatedAt).GreaterThanOrEqualTo(DateTime.Now)
-                    .WithMessage("CreatedAt must be in the future.");
+                RuleFor(website => website.ImageUrl)
+                    .Must(uri => Uri.IsWellFormedUriString(uri, UriKind.Absolute))
+                    .When(input => string.IsNullOrEmpty(input.ImageUrl))
+                    .WithMessage("ImageUrl must be a valid absolute URI.");
+                RuleFor(website => website.CreatedAt).LessThanOrEqualTo(DateTime.Now)
+                    .WithMessage("CreatedAt cannot be in the future.");
             });
         }
     }

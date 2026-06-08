@@ -5,5 +5,7 @@ export const cardFragment = graphql(`
         id
         name
         rssUrl
+        createdAt
+        imageUrl
     }
 `);

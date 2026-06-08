@@ -15,13 +15,12 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/sv";
 import { useState } from "react";
 import { FragmentOf, readFragment } from "gql.tada";
-import { cardFragment } from "@/gql/querry/PostItem";
+import { cardFragment } from "@/gql/query/PostItem";
+import Link from "next/link";
 
 dayjs.extend(utc);
 dayjs.extend(relativeTime);
 dayjs.locale("sv");
-
-
 
 type props = {
     postItem: FragmentOf<typeof cardFragment>;
@@ -32,6 +31,8 @@ export default function Card({ postItem }: props) {
 
     const data = readFragment(cardFragment, postItem);
 
+    const slugName = data.name.replaceAll(" ", "-");
+
     const toggleFavorite = () => {
         setIsVavorite((pre) => !pre);
     };
@@ -39,12 +40,7 @@ export default function Card({ postItem }: props) {
     return (
         <div className={styles.card}>
             {data.imageUrl ? (
-                <Image
-                    width={240}
-                    height={240}
-                    src={data.imageUrl}
-                    alt=""
-                />
+                <Image width={240} height={240} src={data.imageUrl} alt="" />
             ) : (
                 <div className={styles.missingImage}>
                     <FontAwesomeIcon icon={faRss} size="10x" />
@@ -59,11 +55,12 @@ export default function Card({ postItem }: props) {
             <div className={styles.body}>
                 <h2>{data.name}</h2>
                 <div className={styles.buttonAndDate}>
-                    <Button Variant="Text" text="Se kanal" />
-                    <span>{dayjs().to(dayjs(data.publicationDate))}</span>
+                    <Link className="Button" href={`Podd/${slugName}`}>
+                        Se kanal
+                    </Link>
+                    <span>{dayjs().to(dayjs(data.createdAt))}</span>
                 </div>
             </div>
         </div>
     );
 }
-

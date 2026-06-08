@@ -1,6 +1,6 @@
 import Card from "@/component/Card";
 import { client, graphql } from "@/gql";
-import { cardFragment } from "@/gql/querry/PostItem";
+import { cardFragment } from "@/gql/query/PostItem";
 
 export default async function Home() {
     const postItemsQuery = graphql(

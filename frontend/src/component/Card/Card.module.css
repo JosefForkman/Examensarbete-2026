@@ -1,0 +1,51 @@
+.card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--charcoal-blue);
+    border-radius: 0.5rem;
+    border: 2px solid var(--ash-grey);
+    width: 320px;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center center;
+    }
+
+    .missingImage {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 240px;
+        height: 240px;
+
+        color: hsl(from var(--charcoal-blue) h s 15);
+    }
+
+    .bookMark {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+
+        font-size: 1.5rem;
+
+        mix-blend-mode: exclusion;
+    }
+    .body {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
+        height: 118px;
+
+        padding: 0.25rem 1rem 1rem;
+
+        .buttonAndDate {
+            display: flex;
+            justify-content: space-between;
+            align-items: end;
+        }
+    }
+}

@@ -21,7 +21,7 @@ namespace Backend.Data
             modelBuilder.Entity<PostItem>()
             .ToTable(item => item.HasCheckConstraint(
                 "CK_PostItems_PublicationDate_NotInFuture",
-                "\"PublicationDate\" <= CURRENT_DATE"));
+                "\"PublicationDate\" <= CURRENT_TIMESTAMP"));
         }
 
     }

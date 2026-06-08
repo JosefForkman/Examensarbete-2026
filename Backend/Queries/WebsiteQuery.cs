@@ -18,11 +18,14 @@ public static class WebsiteQuery
         {
             Id = website.Id,
             Name = website.SiteName,
+            Description = website.Description,
             Url = website.SiteUrl,
             RSSUrl = website.RSSUrl,
+            CreatedAt = website.CreatedAt,
+            ImageUrl = website.ImageUrl,
         });
     }
-    
+
     [Error<NotFoundException>]
     public static async Task<WebsiteType?> GetWebsiteById(int id, IGenericService<Website> websiteService)
     {
@@ -36,8 +39,11 @@ public static class WebsiteQuery
         {
             Id = website.Id,
             Name = website.SiteName,
+            Description = website.Description,
             Url = website.SiteUrl,
             RSSUrl = website.RSSUrl,
+            CreatedAt = website.CreatedAt,
+            ImageUrl = website.ImageUrl,
         };
     }
 }

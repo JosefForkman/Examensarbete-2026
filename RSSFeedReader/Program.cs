@@ -1,8 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Net.Http.Json;
 using System.ServiceModel.Syndication;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -83,6 +85,7 @@ namespace RSSFeedReader
                             nodes {
                               name
                               rssUrl
+                              url
                             }
                             pageInfo {
                               endCursor
@@ -292,7 +295,7 @@ namespace RSSFeedReader
             var httpClient = new HttpClient();
             var endpoint = "https://localhost:7095/graphql";
 
-            var query = @"
+            var updateWebsiteMutation = @"
                 mutation ($input: UpdateWebsiteInput!) {
                     updateWebsite(id: 1, input: $input) {
                         id
@@ -300,49 +303,85 @@ namespace RSSFeedReader
                 }
             ";
 
-            var latestWebsitePubDate = @"
-                query {
+            var latestWebsitePubDateQuery = @"
+                query test($title: String!) {
                     postItems(
-                        where: { websiteName: { eq: 'syntax.fm' } }
+                        where: { websiteName: { eq: $title } }
                         order: { publicationDate: DESC }
                         first: 1
                     ) {
-                        totalCount
                         nodes {
-                        publicationDate
+                            publicationDate
                         }
                     }
                 }
             ";
 
-            var variables = new
+            var latestWebsitePubDateVariables = new
             {
-                rssUrl = website.RSSUrl,
-                siteName = website.SiteName,
-                siteUrl = website.SiteUrl,
-                imageUrl = feed.ImageUrl,
-                createdAt = "",
-                description = feed.Description,
+                title = website.Name
+            };
+            var latestWebsitePubDateRequestBody = new
+            {
+                query = latestWebsitePubDateQuery,
+                variables = latestWebsitePubDateVariables
             };
 
-            var requestBody = new
+            var latestWebsitePubDateContent = new StringContent(
+                            JsonSerializer.Serialize(latestWebsitePubDateRequestBody),
+                            Encoding.UTF8,
+                            "application/json"
+                        );
+            var latestWebsitePubDateHttpResponse = await httpClient.PostAsync(endpoint, latestWebsitePubDateContent);
+
+            if (!latestWebsitePubDateHttpResponse.IsSuccessStatusCode)
             {
-                query,
-                variables
+                return;
+            }
+
+            var createdAtData = await latestWebsitePubDateHttpResponse.Content.ReadFromJsonAsync<LatestWebsitePubDateResponse>();
+
+            var createdAt = createdAtData?.Data.PostItems.Nodes.FirstOrDefault()?.PublicationDate.ToString("yyyy-MM-ddTHH:mm:ssZ");
+
+            var feedWebsiteUrl = feed.Links.Where(link => link.MediaType is null)
+                                        .Select(link => link.Uri.AbsoluteUri)
+                                        .FirstOrDefault();
+
+            var updateWebsiteVariables = new
+            {
+                input = new
+                {
+                    rssUrl = website.RSSUrl,
+                    siteName = website.Name,
+                    siteUrl = !string.IsNullOrEmpty(website.Uri) ? website.Uri : (feedWebsiteUrl ?? ""),
+                    imageUrl = feed.ImageUrl.AbsoluteUri,
+                    createdAt,
+                    description = feed.Description.Text,
+
+                }
+            };
+            var updateWebsiteRequestBody = new
+            {
+                query = updateWebsiteMutation,
+                variables = updateWebsiteVariables
             };
 
-            var content = new StringContent(
-                            JsonSerializer.Serialize(requestBody),
+            var updateWebsiteContent = new StringContent(
+                            JsonSerializer.Serialize(updateWebsiteRequestBody),
                             Encoding.UTF8,
                             "application/json"
                         );
 
-            var httpResponse = await httpClient.PostAsync(endpoint, content);
+            var updateWebsiteHttpResponse = await httpClient.PostAsync(endpoint, updateWebsiteContent);
 
-            if (!httpResponse.IsSuccessStatusCode)
+            if (!updateWebsiteHttpResponse.IsSuccessStatusCode)
             {
-                Console.WriteLine(httpResponse.Content.ReadAsStringAsync());
+                Console.WriteLine(await updateWebsiteHttpResponse.Content.ReadAsStringAsync());
+                return;
             }
+
+
+            httpClient.Dispose();
         }
 
         public static async Task SaveItemsToDatabase(SyndicationFeed feed)
@@ -455,10 +494,10 @@ namespace RSSFeedReader
                         title = item.Title.Text ?? "",
                         description = feed.Description?.Text ?? "",
                         link = item.Links
-                            .Select(link => link.Uri?.ToString())?
-                            .Where(uri => uri.EndsWith(".mp3", StringComparison.OrdinalIgnoreCase))?
-                            .FirstOrDefault()?.ToString() ?? "",
-                        publicationDate = item.PublishDate.UtcDateTime,
+                                        .Where(link => link.MediaType is not null && link.MediaType.StartsWith("audio/"))
+                                        .Select(link => link.Uri.AbsoluteUri)
+                                        .FirstOrDefault(),
+                        publicationDate = item.PublishDate.ToString("yyyy-MM-ddTHH:mm:ssZ"),
                         postId = item.Id,
                         imageUrl = imageUrl,
                         websiteUrl = "https://www.syntax.fm/"
@@ -546,15 +585,40 @@ namespace RSSFeedReader
         {
             [Key]
             public int Id { get; set; }
-            public string SiteName { get; set; } = string.Empty;
+            public string Name { get; set; } = string.Empty;
             public string? Description { get; set; } = null;
             [Url]
             public string RSSUrl { get; set; } = string.Empty;
             [Url]
-            public string SiteUrl { get; set; } = string.Empty;
+            public string Uri { get; set; } = string.Empty;
             [Url]
             public string? ImageUrl { get; set; } = null;
             public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        }
+
+
+        public class LatestWebsitePubDateResponse
+        {
+            [JsonPropertyName("data")]
+            public LatestWebsitePubDateData Data { get; set; }
+        }
+
+        public class LatestWebsitePubDateData
+        {
+            [JsonPropertyName("postItems")]
+            public LatestWebsitePubDatePostItems PostItems { get; set; }
+        }
+
+        public class LatestWebsitePubDatePostItems
+        {
+            [JsonPropertyName("nodes")]
+            public List<LatestWebsitePubDateNode> Nodes { get; set; }
+        }
+
+        public class LatestWebsitePubDateNode
+        {
+            [JsonPropertyName("publicationDate")]
+            public DateTime PublicationDate { get; set; }
         }
     }
 }

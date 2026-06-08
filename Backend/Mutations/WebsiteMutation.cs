@@ -81,7 +81,7 @@ public class WebsiteMutation
         var validationResult =
             await Validator.ValidateAsync(input, options => options.IncludeRuleSets("Update"));
 
-        if (validationResult != null)
+        if (!validationResult.IsValid)
         {
             throw new ValidationException(
                 $"Validation failed for UpdateWebsiteInput {validationResult.Errors.Select(e => e.ErrorMessage)}");

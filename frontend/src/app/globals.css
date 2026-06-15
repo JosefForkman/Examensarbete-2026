@@ -1,5 +1,5 @@
 :root {
-    --charcoal-blue: #587483;
+    --charcoal-blue: #A9A9A9;
     --slate-gray: #a9a9a9;
     --ash-grey: #2a2a2a;
     --straw-gold: #e5d352;
@@ -51,6 +51,16 @@ main {
     @media screen and (width >= 768px) {
         grid-column: 2 / -1;
         grid-row: 2 / -3;
+    }
+}
+
+a {
+    color: var(--ash-grey);
+
+    &.Button {
+        border: 2px solid var(--ash-grey);
+        padding: 0.75em 1em;
+        border-radius: 0.25em;
     }
 }
 

@@ -75,7 +75,6 @@ namespace RSSFeedReader
 
             for (int i = 0; i < pages; i++)
             {
-
                 var requestBodyGet = new
                 {
                     query = @"
@@ -590,12 +589,7 @@ namespace RSSFeedReader
             public string RSSUrl { get; set; } = string.Empty;
             [Url]
             public string Uri { get; set; } = string.Empty;
-            [Url]
-            public string? ImageUrl { get; set; } = null;
-            public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         }
-
-
         public class LatestWebsitePubDateResponse
         {
             [JsonPropertyName("data")]

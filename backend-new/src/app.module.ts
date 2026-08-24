@@ -4,6 +4,10 @@ import { AppService } from './app.service';
 import { join } from 'path';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { WebsiteModule } from './website/website.module';
+import { FollowedModule } from './followed/followed.module';
+import { PostItemModule } from './post-item/post-item.module';
+import { WatchedModule } from './watched/watched.module';
 
 @Module({
   imports: [
@@ -12,6 +16,10 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       path: '/graphql',
     }),
+    WebsiteModule,
+    FollowedModule,
+    PostItemModule,
+    WatchedModule,
   ],
   controllers: [AppController],
   providers: [AppService],

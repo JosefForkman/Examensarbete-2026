@@ -8,6 +8,7 @@ import { WebsiteModule } from './website/website.module';
 import { FollowedModule } from './followed/followed.module';
 import { PostItemModule } from './post-item/post-item.module';
 import { WatchedModule } from './watched/watched.module';
+import { DbModule } from './db/db.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { WatchedModule } from './watched/watched.module';
     FollowedModule,
     PostItemModule,
     WatchedModule,
+    DbModule,
   ],
   controllers: [AppController],
   providers: [AppService],

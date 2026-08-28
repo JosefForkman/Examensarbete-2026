@@ -1,14 +1,16 @@
 import { Global, Module } from '@nestjs/common';
-import db from 'src/lib/db';
+import db from '../lib/db.js';
+import { ConfigService } from '@nestjs/config';
 
-export const DRIZZLE = 'DRIZZLE_CLIENT';
+export const DRIZZLE = Symbol('DRIZZLE_CLIENT');
 
 @Global()
 @Module({
   providers: [
     {
       provide: DRIZZLE,
-      useFactory: () => db,
+      useFactory: db,
+      inject: [ConfigService],
     },
   ],
   exports: [DRIZZLE],

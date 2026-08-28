@@ -1,14 +1,14 @@
 import 'dotenv/config';
 import { drizzle } from 'drizzle-orm/node-postgres';
-import * as schema from '../db/schema';
 import { Pool } from 'pg';
+import { ConfigService } from '@nestjs/config';
+import { relations } from '../db/schema.js';
 
-const client = new Pool({
-  connectionString: process.env.DATABASE_URL!,
-});
+export default (configService: ConfigService) => {
+  const connectionString = configService.get<string>('DATABASE_URL');
 
-const db = drizzle({ client, relations: schema });
+  const client = new Pool({ connectionString });
 
-export type DB = typeof db;
-
-export default db;
+  const db = drizzle({ client, relations });
+  return db;
+};

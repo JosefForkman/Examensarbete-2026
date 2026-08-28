@@ -16,6 +16,7 @@ var db = postgres.AddDatabase("mydb");
 // New backend
 
 var backend = builder.AddJavaScriptApp("backend", "../backend-new", "start:dev")
+    .WithPnpm()
     .WithReference(db)
     .WaitFor(db);
 

@@ -8,7 +8,14 @@ var postgres = builder
                 .WithPgAdmin();
 var db = postgres.AddDatabase("mydb");
 
-var backend = builder.AddProject<Projects.Backend>("backend")
+// Old backend
+// var backend = builder.AddProject<Projects.Backend>("backend")
+//     .WithReference(db)
+//     .WaitFor(db);
+
+// New backend
+
+var backend = builder.AddJavaScriptApp("backend", "../backend-new", "start:dev")
     .WithReference(db)
     .WaitFor(db);
 

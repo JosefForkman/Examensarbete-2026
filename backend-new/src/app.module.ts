@@ -10,6 +10,8 @@ import { PostItemModule } from './post-item/post-item.module.js';
 import { WatchedModule } from './watched/watched.module.js';
 import { WebsiteModule } from './website/website.module.js';
 import { auth } from './lib/auth.js';
+import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
+import { ZodSerializerInterceptor, ZodValidationPipe } from 'nestjs-zod';
 
 @Module({
   imports: [
@@ -29,6 +31,15 @@ import { auth } from './lib/auth.js';
     DbModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_PIPE,
+      useClass: ZodValidationPipe,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ZodSerializerInterceptor,
+    },
+  ],
 })
 export class AppModule {}

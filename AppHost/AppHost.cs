@@ -4,8 +4,8 @@ var postgres = builder
                 .AddPostgres("postgres")
                 .WithHostPort(5432)
                 .WithDataVolume()
-                .WithLifetime(ContainerLifetime.Persistent)
-                .WithPgAdmin();
+                .WithLifetime(ContainerLifetime.Persistent);
+// .WithPgAdmin();
 var db = postgres.AddDatabase("mydb");
 
 // Old backend
@@ -15,10 +15,12 @@ var db = postgres.AddDatabase("mydb");
 
 // New backend
 
-var backend = builder.AddJavaScriptApp("backend", "../backend-new", "start:dev")
+var backend = builder.AddJavaScriptApp("backend", "../backend-new", "start")
     .WithPnpm()
     .WithReference(db)
-    .WaitFor(db);
+    .WaitFor(db)
+    .WithHttpEndpoint(env: "PORT");
+// .WithHttpEndpoint();
 
 var rssFeedReader = builder.AddProject<Projects.RSSFeedReader>("rss-feed-reader")
     .WithReference(db)

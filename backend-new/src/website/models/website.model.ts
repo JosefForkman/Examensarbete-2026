@@ -1,6 +1,6 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { Followed } from 'src/followed/models/followed.model.js';
-import { PostItem } from 'src/post-item/models/Post-item.model.js';
+import { Followed } from 'src/followed/models/followed.model';
+import { PostItem } from 'src/post-item/models/Post-item.model';
 
 @ObjectType()
 export class Website {

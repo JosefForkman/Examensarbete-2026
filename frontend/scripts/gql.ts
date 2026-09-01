@@ -1,14 +1,14 @@
 import "dotenv/config";
 import { execSync } from "child_process";
 
-const backendEndpoint = process.env.BACKEND_HTTPS;
+const backendEndpoint = process.env.BACKEND_HTTP;
 
 if (!backendEndpoint) {
     console.error("❌ Could not find backendEndpoint!");
     process.exit(1);
 }
 
-const GraphQLEndPoint = `${backendEndpoint}/graphql/`;
+const GraphQLEndPoint = `${backendEndpoint}/graphql`;
 
 try {
     console.log("Starting generate .graphql");

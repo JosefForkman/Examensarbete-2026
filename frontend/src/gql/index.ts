@@ -2,7 +2,7 @@ import { introspection } from "@/graphql-env";
 import { initGraphQLTada } from "gql.tada";
 import { GraphQLClient } from "graphql-request";
 
-const endpoint = `${process.env.services__backend__https__0}/graphql`;
+const endpoint = `${process.env.BACKEND_HTTP}/graphql`;
 
 export const client = (headers?: Headers) =>
     new GraphQLClient(endpoint, {

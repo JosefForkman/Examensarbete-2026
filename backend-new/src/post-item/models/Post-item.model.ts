@@ -1,5 +1,5 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { Watched } from 'src/watched/models/watched.model.js';
+import { Watched } from 'src/watched/models/watched.model';
 
 @ObjectType()
 export class PostItem {

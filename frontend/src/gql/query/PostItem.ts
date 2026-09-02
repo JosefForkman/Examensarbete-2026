@@ -1,9 +1,9 @@
 import { graphql } from "..";
 
 export const cardFragment = graphql(`
-    fragment cardDitals on WebsiteType {
+    fragment cardDitals on Website {
         id
-        name
+        siteName
         rssUrl
         createdAt
         imageUrl

@@ -1,45 +1,75 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { PgTable, PgTableWithColumns } from 'drizzle-orm/pg-core';
 import { DRIZZLE } from 'src/db/db.module';
 import { relations, schema } from '../db/schema.js';
+import { PgTableWithColumns } from 'drizzle-orm/pg-core';
+import { eq } from 'drizzle-orm';
+import {
+  inferInsertType,
+  inferSelectType,
+  inferUpdateType,
+  pgTableDefinition,
+  SchemaTables,
+} from './typs/DB.types.js';
 
-@Injectable()
-export class BaseServiceService<
-TTable extends PgTableWithColumns<any>,
-  K extends keyof typeof schema,
-  TSelect = TTable['$inferSelect'],
-  TInsert = TTable['$inferInsert'],
-> {
+export class BaseServiceService<T extends SchemaTables> {
   constructor(
     @Inject(DRIZZLE) protected db: NodePgDatabase<typeof relations>,
-    protected readonly table: TTable,
-    private readonly tableName: K,
-    protected readonly TSelect: TSelect,
-    protected readonly TInsert: TInsert,
+    public tableName: T,
+
+    private tableDefinition = schema[
+      tableName
+    ] as PgTableWithColumns<pgTableDefinition>,
   ) {}
 
-  async findAll(): Promise<TSelect[]> {
-    const query = this.db.query[this.tableName];
-    return (await query.findMany()) as TSelect[];
+  async getAll(): Promise<inferSelectType<T>[]> {
+    return await this.db.select().from(this.tableDefinition);
   }
 
-  async findById(id: number): Promise<TSelect | null> {
-    const query = this.db.query[this.tableName];
-    const result = await query.findFirst();
+  async getById(id: string | number): Promise<inferSelectType<T> | null> {
+    const results = await this.db
+      .select()
+      .from(this.tableDefinition)
+      .where(eq(this.tableDefinition.id, id))
+      .limit(1);
 
-    if (!result) {
-      throw new NotFoundException(`Record with id ${id} not found`);
+    const result = results.at(0);
+
+    if (result === undefined) {
+      return null;
     }
 
-    return result as TSelect;
+    return result;
   }
 
-  async create(data: TInsert): Promise<TSelect> {
-    const [result] = await this.db
-      .insert(this.table)
-      .values([...data])
+  async create(data: inferInsertType<T>) {
+    const createdRecord = await this.db
+      .insert(this.tableDefinition)
+      .values(data)
       .returning();
-    return result as TSelect;
+
+    return createdRecord;
+  }
+
+  async update(
+    id: string | number,
+    data: Partial<inferUpdateType<T>>,
+  ): Promise<inferSelectType<T> | null> {
+    const [updatedRecord] = await this.db
+      .update(this.tableDefinition)
+      .set(data)
+      .where(eq(this.tableDefinition.id, id))
+      .returning();
+
+    return updatedRecord;
+  }
+
+  async delete(id: string | number) {
+    const deletedRecord = await this.db
+      .delete(this.tableDefinition)
+      .where(eq(this.tableDefinition.id, id))
+      .returning();
+
+    return deletedRecord;
   }
 }

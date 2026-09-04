@@ -4,8 +4,8 @@ var postgres = builder
                 .AddPostgres("postgres")
                 .WithHostPort(5432)
                 .WithDataVolume()
-                .WithLifetime(ContainerLifetime.Persistent);
-// .WithPgAdmin();
+                .WithLifetime(ContainerLifetime.Persistent)
+                .WithPgAdmin();
 var db = postgres.AddDatabase("mydb");
 
 // Old backend
@@ -15,10 +15,15 @@ var db = postgres.AddDatabase("mydb");
 
 // New backend
 
+var dbMigrate = builder.AddJavaScriptApp("db-migrate", "../backend-new", "db:migrate")
+    .WithPnpm()
+    .WithReference(db)
+    .WaitFor(db);
+
 var backend = builder.AddJavaScriptApp("backend", "../backend-new", "start")
     .WithPnpm()
     .WithReference(db)
-    .WaitFor(db)
+    .WaitFor(dbMigrate)
     .WithHttpEndpoint(env: "PORT");
 // .WithHttpEndpoint();
 

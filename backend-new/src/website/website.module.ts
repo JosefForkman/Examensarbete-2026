@@ -4,5 +4,6 @@ import { WebsiteResolver } from './website.resolver';
 
 @Module({
   providers: [WebsiteService, WebsiteResolver],
+  imports: [],
 })
 export class WebsiteModule {}

@@ -12,7 +12,6 @@ import { WebsiteModule } from './website/website.module.js';
 import { auth } from './lib/auth.js';
 import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { ZodSerializerInterceptor, ZodValidationPipe } from 'nestjs-zod';
-import { BaseServiceModule } from './base-service/base-service.module';
 
 @Module({
   imports: [
@@ -30,7 +29,6 @@ import { BaseServiceModule } from './base-service/base-service.module';
     PostItemModule,
     WatchedModule,
     DbModule,
-    BaseServiceModule,
   ],
   controllers: [],
   providers: [

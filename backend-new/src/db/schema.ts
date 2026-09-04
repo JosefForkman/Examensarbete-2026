@@ -1,6 +1,17 @@
 import { defineRelations } from 'drizzle-orm';
 import { account, session, user, verification } from './auth.schema.js';
-import { websites, followed, postItems, watched } from './own.Schema.js';
+import { websites, followed, postItems, watched } from './own.schema.js';
+
+export const schema = {
+  account,
+  session,
+  user,
+  verification,
+  websites,
+  followed,
+  postItems,
+  watched,
+};
 
 export const relations = defineRelations(
   {
@@ -58,14 +69,3 @@ export const relations = defineRelations(
     },
   }),
 );
-
-export const schema = {
-  user,
-  session,
-  account,
-  verification,
-  websites,
-  followed,
-  postItems,
-  watched,
-};

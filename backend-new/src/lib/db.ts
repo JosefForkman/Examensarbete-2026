@@ -7,7 +7,7 @@ import { relations } from '../db/schema.js';
 export type DrizzleDb = NodePgDatabase<typeof relations>;
 
 export default (configService: ConfigService) => {
-  const connectionString = configService.get<string>('DATABASE_URL');
+  const connectionString = configService.get<string>('MYDB_URI');
 
   const client = new Pool({ connectionString });
 

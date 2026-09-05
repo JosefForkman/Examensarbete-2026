@@ -1,5 +1,5 @@
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, NotFoundException } from '@nestjs/common';
 import { WebsiteService } from './website.service.js';
 import {
   CreateWebsiteDTO,
@@ -7,7 +7,6 @@ import {
   WebsiteDTO,
 } from './dto/website.js';
 import { AllowAnonymous } from '@thallesp/nestjs-better-auth';
-import type { inferSelectType } from 'src/base-service/typs/DB.types.js';
 
 @Resolver(() => WebsiteDTO)
 export class WebsiteResolver {
@@ -66,13 +65,19 @@ export class WebsiteResolver {
 
   @Mutation(() => Boolean)
   @AllowAnonymous()
-  async delete(@Args('id', { type: () => Int }) id: number): Promise<boolean> {
+  async delete(@Args('id', { type: () => Int }) id: number) {
     const deletedWebsite = await this.websiteService.delete(id);
 
     if (!deletedWebsite) {
       throw new NotFoundException('Website not found for deletion');
     }
 
-    return true;
+    throw new HttpException(
+      {
+        status: HttpStatus.NO_CONTENT,
+        message: 'Website deleted successfully',
+      },
+      HttpStatus.NO_CONTENT,
+    );
   }
 }

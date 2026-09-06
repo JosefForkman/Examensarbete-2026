@@ -1,11 +1,10 @@
 import {
   pgTable,
   text,
-  integer,
   timestamp,
   index,
   check,
-  serial,
+  uuid,
 } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 import { user } from './auth.schema.js';
@@ -15,13 +14,13 @@ import { user } from './auth.schema.js';
 // ============================================================================
 
 export const websites = pgTable('Websites', {
-  id: serial('Id').primaryKey(),
-  siteName: text('SiteName').notNull(),
+  id: uuid('Id').primaryKey().defaultRandom(),
+  siteName: text('SiteName').notNull().unique(),
   rssUrl: text('RSSUrl').notNull(),
   siteUrl: text('SiteUrl').notNull(),
   createdAt: timestamp('CreatedAt', { withTimezone: true })
     .notNull()
-    .default(sql`TIMESTAMPTZ '-infinity'`),
+    .defaultNow(),
   description: text('Description'),
   imageUrl: text('ImageUrl'),
 });
@@ -29,11 +28,11 @@ export const websites = pgTable('Websites', {
 export const followed = pgTable(
   'Followed',
   {
-    id: serial('Id').primaryKey(),
+    id: uuid('Id').primaryKey().defaultRandom(),
     userId: text('UserId')
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' }),
-    websiteId: integer('WebsiteId')
+    websiteId: uuid('WebsiteId')
       .notNull()
       .references(() => websites.id, { onDelete: 'cascade' }),
   },
@@ -46,7 +45,7 @@ export const followed = pgTable(
 export const postItems = pgTable(
   'PostItems',
   {
-    id: serial('Id').primaryKey(),
+    id: uuid('Id').primaryKey().defaultRandom(),
     title: text('Title').notNull(),
     description: text('Description'),
     link: text('Link').notNull(),
@@ -54,7 +53,7 @@ export const postItems = pgTable(
     publicationDate: timestamp('PublicationDate', {
       withTimezone: true,
     }).notNull(),
-    websiteId: integer('WebsiteId')
+    websiteId: uuid('WebsiteId')
       .notNull()
       .references(() => websites.id, { onDelete: 'cascade' }),
     postId: text('PostId').notNull().default(''),
@@ -71,11 +70,11 @@ export const postItems = pgTable(
 export const watched = pgTable(
   'Watched',
   {
-    id: serial('Id').primaryKey(),
+    id: uuid('Id').primaryKey().defaultRandom(),
     userId: text('UserId')
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' }),
-    postItemId: integer('PostItemId')
+    postItemId: uuid('PostItemId')
       .notNull()
       .references(() => postItems.id, { onDelete: 'cascade' }),
   },

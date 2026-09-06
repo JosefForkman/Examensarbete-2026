@@ -7,8 +7,10 @@ export default async function Home() {
         `
             query {
                 websites(first: 20) {
-                    nodes {
-                        ...cardDitals
+                    edges {
+                        node {
+                            ...cardDitals
+                        }
                     }
                 }
             }
@@ -26,9 +28,9 @@ export default async function Home() {
                 player.
             </p>
 
-            {websites?.nodes &&
-                websites.nodes.map((postItem, index) => (
-                    <Card key={index} postItem={postItem} />
+            {websites.edges &&
+                websites.edges.map((edge, index) => (
+                    <Card key={index} postItem={edge.node} />
                 ))}
         </main>
     );

@@ -27,14 +27,14 @@ type props = {
 };
 
 export default function Card({ postItem }: props) {
-    const [isVavorite, setIsVavorite] = useState(false);
+    const [isFavorite, setIsFavorite] = useState(false);
 
     const data = readFragment(cardFragment, postItem);
 
-    const slugName = data.name.replaceAll(" ", "-");
+    const slugName = data.siteName.replaceAll(" ", "-");
 
     const toggleFavorite = () => {
-        setIsVavorite((pre) => !pre);
+        setIsFavorite((pre) => !pre);
     };
 
     return (
@@ -48,12 +48,12 @@ export default function Card({ postItem }: props) {
             )}
             <Button
                 className={styles.bookMark}
-                Icon={isVavorite ? faBookmarkSolid : faBookmarkRegular}
+                Icon={isFavorite ? faBookmarkSolid : faBookmarkRegular}
                 Variant="IconOnly"
                 onClick={toggleFavorite}
             />
             <div className={styles.body}>
-                <h2>{data.name}</h2>
+                <h2>{data.siteName}</h2>
                 <div className={styles.buttonAndDate}>
                     <Link className="Button" href={`Podd/${slugName}`}>
                         Se kanal

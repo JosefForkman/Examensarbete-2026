@@ -37,6 +37,19 @@ describe('Pagination', () => {
     });
   });
 
+  it('returns an empty edges array when the cursor is on the last item', () => {
+    const result = new Pagination(items, {
+      first: 2,
+      after: 'three',
+    }).getResult();
+
+    expect(result.edges).toEqual([]);
+    expect(result.pageInfo).toEqual({
+      hasNextPage: false,
+      endCursor: undefined,
+    });
+  });
+
   it('uses the default page size', () => {
     const result = new Pagination(items, {}).getResult();
 

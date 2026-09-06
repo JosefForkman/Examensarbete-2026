@@ -28,14 +28,16 @@ export class Pagination<T extends CursorEntity> {
       cursor: item.id,
     }));
 
-    return {
+    const paginationResult = {
       edges,
       pageInfo: {
         hasNextPage: startIndex + pageSize < this.items.length,
         endCursor: lastItem?.id,
       },
       totalCount: this.items.length,
-    };
+    } satisfies IPaginatedType<T>;
+
+    return paginationResult;
   }
 
   private getStartIndex(): number {
@@ -46,6 +48,9 @@ export class Pagination<T extends CursorEntity> {
     const cursorIndex = this.items.findIndex(
       (item) => item.id === this.args.after,
     );
-    return cursorIndex === -1 ? 0 : cursorIndex + 1;
+    if (cursorIndex === -1) {
+      return 0;
+    }
+    return cursorIndex + 1;
   }
 }

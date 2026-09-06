@@ -1,11 +1,11 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { Followed } from 'src/followed/models/followed.model';
 import { PostItem } from 'src/post-item/models/Post-item.model';
 
 @ObjectType()
 export class Website {
-  @Field(() => Int)
-  id!: number;
+  @Field()
+  id!: string;
 
   @Field()
   SiteName!: string;

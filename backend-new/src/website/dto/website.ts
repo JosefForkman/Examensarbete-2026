@@ -1,9 +1,10 @@
-import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { Paginated } from 'src/base-service/dto/paginated';
 
 @ObjectType('Website')
 export class WebsiteDTO {
-  @Field(() => Int)
-  id!: number;
+  @Field()
+  id!: string;
   @Field()
   siteName!: string;
   @Field()
@@ -17,6 +18,9 @@ export class WebsiteDTO {
   @Field(() => String, { nullable: true })
   imageUrl: string | null = null;
 }
+
+@ObjectType('WebsitePaginated')
+export class WebsitePaginatedDTO extends Paginated(WebsiteDTO) {}
 
 @InputType('CreateWebsiteInput')
 export class CreateWebsiteDTO {

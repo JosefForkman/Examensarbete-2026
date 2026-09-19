@@ -1,7 +1,7 @@
-import { Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { DRIZZLE } from 'src/db/db.module';
-import { relations, schema } from '../db/schema.js';
+import { DRIZZLE } from '../db/db.module';
+import { relations, schema } from '../db/schema';
 import { PgTableWithColumns } from 'drizzle-orm/pg-core';
 import { eq } from 'drizzle-orm';
 import {
@@ -12,6 +12,7 @@ import {
   SchemaTables,
 } from './typs/DB.types.js';
 
+@Injectable()
 export class BaseServiceService<T extends SchemaTables> {
   constructor(
     @Inject(DRIZZLE) protected db: NodePgDatabase<typeof relations>,

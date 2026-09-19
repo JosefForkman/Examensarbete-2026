@@ -7,7 +7,7 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
-import { user } from './auth.schema.js';
+import { user } from './auth.schema';
 
 // ============================================================================
 // TABLES

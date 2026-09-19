@@ -1,5 +1,5 @@
 import { Global, Module } from '@nestjs/common';
-import db from '../lib/db.js';
+import db from '../lib/db';
 import { ConfigService } from '@nestjs/config';
 
 export const DRIZZLE = Symbol('DRIZZLE_CLIENT');

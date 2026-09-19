@@ -20,7 +20,7 @@ var dbMigrate = builder.AddJavaScriptApp("db-migrate", "../backend-new", "db:mig
     .WithReference(db)
     .WaitFor(db);
 
-var backend = builder.AddJavaScriptApp("backend", "../backend-new", "start")
+var backend = builder.AddJavaScriptApp("backend", "../backend-new", "start:dev")
     .WithPnpm()
     .WithReference(db)
     .WaitFor(dbMigrate)

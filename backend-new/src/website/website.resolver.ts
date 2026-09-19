@@ -1,22 +1,22 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { HttpException, HttpStatus, NotFoundException } from '@nestjs/common';
-import { WebsiteService } from './website.service.js';
+import { WebsiteService } from './website.service';
 import {
   CreateWebsiteDTO,
   UpdateWebsiteDTO,
   WebsiteDTO,
   WebsitePaginatedDTO,
-} from './dto/website.js';
-import { AllowAnonymous } from '@thallesp/nestjs-better-auth';
-import { PaginationArgs } from 'src/args/pagination.args';
-import { Pagination } from 'src/base-service/pagination';
+} from './dto/website';
+// import { AllowAnonymous } from '@thallesp/nestjs-better-auth';
+import { PaginationArgs } from '../args/pagination.args';
+import { Pagination } from '../base-service/pagination';
 
 @Resolver(() => WebsitePaginatedDTO)
 export class WebsiteResolver {
   constructor(private readonly websiteService: WebsiteService) {}
 
   @Query(() => WebsitePaginatedDTO, { name: 'websites' })
-  @AllowAnonymous()
+  // @AllowAnonymous()
   async getAll(
     @Args()
     pagination: PaginationArgs,
@@ -26,7 +26,7 @@ export class WebsiteResolver {
   }
 
   @Query(() => WebsitePaginatedDTO, { name: 'website' })
-  @AllowAnonymous()
+  // @AllowAnonymous()
   async getById(@Args('id') id: string): Promise<WebsiteDTO | null> {
     const website = await this.websiteService.getById(id);
 
@@ -38,7 +38,7 @@ export class WebsiteResolver {
   }
 
   @Mutation(() => WebsiteDTO)
-  @AllowAnonymous()
+  // @AllowAnonymous()
   async create(
     @Args('data', { type: () => CreateWebsiteDTO }) data: CreateWebsiteDTO,
   ): Promise<WebsiteDTO> {
@@ -53,7 +53,7 @@ export class WebsiteResolver {
   }
 
   @Mutation(() => WebsiteDTO)
-  @AllowAnonymous()
+  // @AllowAnonymous()
   async update(
     @Args('id') id: string,
     @Args('data', { type: () => UpdateWebsiteDTO }) data: UpdateWebsiteDTO,
@@ -68,7 +68,7 @@ export class WebsiteResolver {
   }
 
   @Mutation(() => Boolean)
-  @AllowAnonymous()
+  // @AllowAnonymous()
   async delete(@Args('id') id: string) {
     const deletedWebsite = await this.websiteService.delete(id);
 

@@ -1,5 +1,5 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
-import { Paginated } from 'src/base-service/dto/paginated';
+import { Paginated } from '../../base-service/dto/paginated';
 
 @ObjectType('Website')
 export class WebsiteDTO {

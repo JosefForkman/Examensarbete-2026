@@ -11,9 +11,12 @@ import {
   pgTableDefinition,
   SchemaTables,
 } from './typs/DB.types.js';
+import { Filter } from './filter';
+import { FilterPayload } from './typs/filter';
 
 @Injectable()
 export class BaseServiceService<T extends SchemaTables> {
+  private filter: Filter<typeof this.tableDefinition>;
   constructor(
     @Inject(DRIZZLE) protected db: NodePgDatabase<typeof relations>,
     public tableName: T,
@@ -21,10 +24,16 @@ export class BaseServiceService<T extends SchemaTables> {
     private tableDefinition = schema[
       tableName
     ] as PgTableWithColumns<pgTableDefinition>,
-  ) {}
+  ) {
+    this.filter = new Filter(this.tableDefinition);
+  }
 
-  async getAll(): Promise<inferSelectType<T>[]> {
-    return this.db.select().from(this.tableDefinition);
+  async getAll(
+    filter?: FilterPayload<typeof this.tableDefinition>,
+  ): Promise<inferSelectType<T>[]> {
+    const where = this.filter.buildWhere(filter);
+
+    return this.db.select().from(this.tableDefinition).where(where);
   }
 
   async getById(id: string): Promise<inferSelectType<T> | null> {

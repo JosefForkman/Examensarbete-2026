@@ -10,7 +10,6 @@ import {
 import { AllowAnonymous } from '@thallesp/nestjs-better-auth';
 import { PaginationArgs } from '../args/pagination.args';
 import { Pagination } from '../base-service/pagination';
-import { WebsiteFilterArgs } from 'src/args/website.filter.args';
 
 @Resolver(() => WebsitePaginatedDTO)
 export class WebsiteResolver {
@@ -21,11 +20,8 @@ export class WebsiteResolver {
   async getAll(
     @Args()
     pagination: PaginationArgs,
-
-    @Args()
-    filter: WebsiteFilterArgs,
   ): Promise<WebsitePaginatedDTO> {
-    const websites = await this.websiteService.getAll(filter.filter);
+    const websites = await this.websiteService.getAll();
     return new Pagination(websites, pagination).getResult();
   }
 

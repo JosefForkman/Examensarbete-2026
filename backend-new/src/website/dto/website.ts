@@ -5,16 +5,22 @@ import { Paginated } from '../../base-service/dto/paginated';
 export class WebsiteDTO {
   @Field()
   id!: string;
+
   @Field()
   siteName!: string;
+
   @Field()
   rssUrl!: string;
+
   @Field()
   siteUrl!: string;
+
   @Field(() => Date, { defaultValue: new Date() })
   createdAt!: Date;
+
   @Field(() => String, { nullable: true })
   description: string | null = null;
+
   @Field(() => String, { nullable: true })
   imageUrl: string | null = null;
 }

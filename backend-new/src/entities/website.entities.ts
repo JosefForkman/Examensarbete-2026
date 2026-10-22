@@ -5,11 +5,11 @@ import {
   CreateDateColumn,
   OneToMany,
 } from 'typeorm';
-import { followed } from './followed.entities';
-import { postItems } from './PostItems.entities';
+import { Followed } from './followed.entities';
+import { PostItems } from './PostItems.entities';
 
 @Entity()
-export class website {
+export class Website {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -32,9 +32,9 @@ export class website {
   imageUrl: string;
 
   // Relationer
-  @OneToMany(() => followed, (followed) => followed.website)
-  followers: followed[];
+  @OneToMany(() => Followed, (followed) => followed.website)
+  followers: Followed[];
 
-  @OneToMany(() => postItems, (postItem) => postItem.website)
-  postItems: postItems[];
+  @OneToMany(() => PostItems, (postItem) => postItem.website)
+  postItems: PostItems[];
 }

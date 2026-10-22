@@ -7,11 +7,11 @@ import {
   Index,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { website } from './website.entities';
-import { watched } from './watched.entities';
+import { Website } from './website.entities';
+import { Watched } from './watched.entities';
 
 @Entity()
-export class postItems {
+export class PostItems {
   @PrimaryGeneratedColumn('uuid', { name: 'Id' })
   id: string;
 
@@ -34,16 +34,16 @@ export class postItems {
   @Column('uuid', { name: 'WebsiteId' })
   websiteId: string;
 
-  @ManyToOne(() => website, (website) => website.postItems, {
+  @ManyToOne(() => Website, (website) => website.postItems, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'WebsiteId' })
-  website: website;
+  website: Website;
 
   @Column('text', { name: 'PostId', default: '' })
   postId: string;
 
   // Relationer
-  @OneToMany(() => watched, (watched) => watched.postItem)
-  watches: watched[];
+  @OneToMany(() => Watched, (watched) => watched.postItem)
+  watches: Watched[];
 }

@@ -19,12 +19,12 @@ export class Verification {
   @Column('text')
   value: string;
 
-  @Column('timestamp', { name: 'expires_at' })
+  @Column('timestamp', { name: 'expiresAt' })
   expiresAt: Date;
 
-  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
+  @CreateDateColumn({ name: 'createdAt', type: 'timestamp' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
+  @UpdateDateColumn({ name: 'updatedAt', type: 'timestamp' })
   updatedAt: Date;
 }

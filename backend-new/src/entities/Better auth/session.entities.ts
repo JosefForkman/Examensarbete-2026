@@ -15,29 +15,29 @@ export class Session {
   @PrimaryColumn('uuid')
   id: string;
 
-  @Column('timestamp', { name: 'expires_at' })
+  @Column('timestamp', { name: 'expiresAt' })
   expiresAt: Date;
 
   @Column('text', { unique: true })
   token: string;
 
-  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
+  @CreateDateColumn({ name: 'createdAt', type: 'timestamp' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
+  @UpdateDateColumn({ name: 'updatedAt', type: 'timestamp' })
   updatedAt: Date;
 
-  @Column('text', { name: 'ip_address', nullable: true })
+  @Column('text', { name: 'ipAddress', nullable: true })
   ipAddress?: string;
 
-  @Column('text', { name: 'user_agent', nullable: true })
+  @Column('text', { name: 'userAgent', nullable: true })
   userAgent?: string;
 
   @Index('session_userId_idx')
-  @Column('uuid', { name: 'user_id' })
+  @Column('uuid', { name: 'userId' })
   userId: string;
 
   @ManyToOne(() => User, (user) => user.sessions, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'user_id' })
+  @JoinColumn({ name: 'userId' })
   user: User;
 }

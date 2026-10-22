@@ -20,16 +20,16 @@ export class User {
   @Column('text', { unique: true })
   email: string;
 
-  @Column('boolean', { name: 'email_verified', default: false })
+  @Column('boolean', { name: 'emailVerified', default: false })
   emailVerified: boolean;
 
   @Column('text', { nullable: true })
   image?: string;
 
-  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
+  @CreateDateColumn({ name: 'createdAt', type: 'timestamp' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
+  @UpdateDateColumn({ name: 'updatedAt', type: 'timestamp' })
   updatedAt: Date;
 
   // Relationer

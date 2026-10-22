@@ -6,11 +6,11 @@ import {
   JoinColumn,
   Index,
 } from 'typeorm';
-import { postItems } from './PostItems.entities';
+import { PostItems } from './PostItems.entities';
 import { User } from './Better auth/user.entities';
 
 @Entity()
-export class watched {
+export class Watched {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -26,9 +26,9 @@ export class watched {
   @Column('uuid', { name: 'PostItemId' })
   postItemId: string;
 
-  @ManyToOne(() => postItems, (postItem) => postItem.watches, {
+  @ManyToOne(() => PostItems, (postItem) => postItem.watches, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'PostItemId' })
-  postItem: postItems;
+  postItem: PostItems;
 }

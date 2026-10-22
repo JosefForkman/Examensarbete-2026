@@ -6,11 +6,11 @@ import {
   JoinColumn,
   Index,
 } from 'typeorm';
-import { website } from './website.entities';
+import { Website } from './website.entities';
 import { User } from './Better auth/user.entities';
 
 @Entity()
-export class followed {
+export class Followed {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -26,9 +26,9 @@ export class followed {
   @Column('uuid', { name: 'WebsiteId' })
   websiteId: string;
 
-  @ManyToOne(() => website, (website) => website.followers, {
+  @ManyToOne(() => Website, (website) => website.followers, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'WebsiteId' })
-  website: website;
+  website: Website;
 }

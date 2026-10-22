@@ -15,15 +15,15 @@ var db = postgres.AddDatabase("mydb");
 
 // New backend
 
-var dbMigrate = builder.AddJavaScriptApp("db-migrate", "../backend-new", "db:migrate")
-    .WithPnpm()
-    .WithReference(db)
-    .WaitFor(db);
+// var dbMigrate = builder.AddJavaScriptApp("db-migrate", "../backend-new", "db:migrate")
+//     .WithPnpm()
+//     .WithReference(db)
+//     .WaitFor(db);
 
 var backend = builder.AddJavaScriptApp("backend", "../backend-new", "start:dev")
     .WithPnpm()
     .WithReference(db)
-    .WaitFor(dbMigrate)
+    // .WaitFor(dbMigrate)
     .WithHttpEndpoint(env: "PORT");
 // .WithHttpEndpoint();
 

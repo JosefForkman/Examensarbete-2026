@@ -18,9 +18,11 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "db:migrate": "drizzle-kit migrate",
-    "db:generate": "drizzle-kit generate",
-    "typeorm": "typeorm-ts-node-esm"
+    "typeorm": "node -r ts-node/register -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
+    "migration:generate": "npm run typeorm migration:generate -- src/typeorm/migrations/account-issuer-null -d src/typeorm/dbConnect.ts",
+    "migration:run": "npm run typeorm migration:run -- -d src/typeorm/dbConnect.ts",
+    "migration:revert": "npm run typeorm migration:revert -- -d src/typeorm/dbConnect.ts",
+    "migration:status": "npm run typeorm migration:show -- -d src/typeorm/dbConnect.ts"
   },
   "dependencies": {
     "@apollo/server": "^5.5.1",
@@ -38,7 +40,7 @@
     "@ptc-org/nestjs-query-graphql": "11.0.0-alpha.1",
     "@ptc-org/nestjs-query-typeorm": "11.0.0-alpha.1",
     "@thallesp/nestjs-better-auth": "^2.7.0",
-    "better-auth": "^1.7.2",
+    "better-auth": "^1.7.13",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
     "dataloader": "^2.2.3",

@@ -17,7 +17,7 @@ export class Account {
   @PrimaryColumn('uuid')
   id: string;
 
-  @Column('text')
+  @Column('text', { name: 'issuer', nullable: true })
   issuer: string;
 
   @Column('text', { name: 'accountId' })

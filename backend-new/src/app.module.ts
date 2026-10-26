@@ -13,13 +13,7 @@ import { auth } from './lib/auth.js';
 import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './lib/Filters/http-exception.filter.js';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Website } from './entities/website.entities.js';
-import { Watched } from './entities/watched.entities.js';
-import { PostItems } from './entities/PostItems.entities.js';
-import { Followed } from './entities/followed.entities.js';
-import { User } from './entities/Better auth/user.entities.js';
-import { Session } from './entities/Better auth/session.entities.js';
-import { Account } from './entities/Better auth/account.entities.js';
+import { typeormOptions } from './typeorm/dbConnect.js';
 
 @Module({
   imports: [
@@ -30,20 +24,8 @@ import { Account } from './entities/Better auth/account.entities.js';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory(configService: ConfigService) {
-        return {
-          type: 'postgres',
-          url: configService.get<string>('MYDB_URI'),
-          entities: [
-            Followed,
-            PostItems,
-            Watched,
-            Website,
-            User,
-            Session,
-            Account,
-          ],
-          synchronize: false, // Set to false in production
-        };
+        const databaseConnectionString = configService.get<string>('MYDB_URI');
+        return typeormOptions(databaseConnectionString);
       },
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -60,10 +42,10 @@ import { Account } from './entities/Better auth/account.entities.js';
   ],
   controllers: [],
   providers: [
-    {
-      provide: APP_FILTER,
-      useClass: HttpExceptionFilter,
-    },
+    // {
+    //   provide: APP_FILTER,
+    //   useClass: HttpExceptionFilter,
+    // },
   ],
 })
 export class AppModule {}

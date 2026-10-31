@@ -18,12 +18,12 @@ export default async function Page({ params }: Props) {
     const podcastDetailQuery = graphql(
         `
             query GetPodcastDetail($name: String!) {
-                websites(where: { name: { eq: $name } }) {
+                websites(filter: { siteName: { eq: $name } }) {
                     ...website
                 }
                 postItems(
-                    where: { websiteName: { eq: $name } }
-                    order: [{ publicationDate: DESC }]
+                    filter: { title: { eq: $name } }
+                    sorting: { field: publicationDate, direction: DESC }
                 ) {
                     ...post
                 }
@@ -37,7 +37,7 @@ export default async function Page({ params }: Props) {
     });
 
     const websiteNodes = readFragment(websites, data.websites);
-    const podcast = websiteNodes?.nodes?.[0];
+    const podcast = websiteNodes.edges[0]?.node;
     const episodes = data.postItems;
 
     if (!podcast || !episodes) {
@@ -55,7 +55,7 @@ export default async function Page({ params }: Props) {
                 {podcast.imageUrl ? (
                     <Image
                         src={podcast.imageUrl}
-                        alt={podcast.name}
+                        alt={podcast.siteName}
                         width={240}
                         height={240}
                         className={styles.image}
@@ -66,7 +66,7 @@ export default async function Page({ params }: Props) {
                     </div>
                 )}
                 <div className={styles.headerInfo}>
-                    <h1>{podcast.name}</h1>
+                    <h1>{podcast.siteName}</h1>
                     {podcast.description && (
                         <p className={styles.description}>
                             {podcast.description}
@@ -75,7 +75,7 @@ export default async function Page({ params }: Props) {
                 </div>
             </header>
 
-            <EpisodeList episodes={episodes} podcastName={podcast.name} />
+            <EpisodeList episodes={episodes} podcastName={podcast.siteName} />
         </main>
     );
 }

@@ -6,7 +6,7 @@ export default async function Home() {
     const postItemsQuery = graphql(
         `
             query {
-                websites(first: 20) {
+                websites(paging: {first: 20}) {
                     edges {
                         node {
                             ...cardDitals

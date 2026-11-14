@@ -1,7 +1,7 @@
 import { FilterableField, Relation } from '@ptc-org/nestjs-query-graphql';
 import { PostItemDto } from 'src/post-item/dto/post-item';
 
-@Relation('followers', () => FollowedDto, { nullable: true })
+// @Relation('followers', () => FollowedDto, { nullable: true })
 @Relation('postItems', () => PostItemDto, { nullable: true })
 export class WatchedDto {
   @FilterableField()

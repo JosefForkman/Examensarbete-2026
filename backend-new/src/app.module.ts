@@ -4,7 +4,6 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from '@thallesp/nestjs-better-auth';
-import { FollowedModule } from './followed/followed.module.js';
 import { PostItemModule } from './post-item/post-item.module.js';
 import { WatchedModule } from './watched/watched.module.js';
 import { WebsiteModule } from './website/website.module.js';
@@ -34,7 +33,6 @@ import { typeormOptions } from './typeorm/dbConnect.js';
     }),
     AuthModule.forRoot({ auth }),
     WebsiteModule,
-    FollowedModule,
     PostItemModule,
     WatchedModule,
   ],

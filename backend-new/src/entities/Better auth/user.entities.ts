@@ -8,6 +8,8 @@ import {
 } from 'typeorm';
 import { Session } from './session.entities';
 import { Account } from './account.entities';
+import { Followed } from '../followed.entities';
+import { Watched } from '../watched.entities';
 
 @Entity('user')
 export class User {
@@ -38,4 +40,10 @@ export class User {
 
   @OneToMany(() => Account, (account) => account.user)
   accounts: Account[];
+
+  @OneToMany(() => Followed, (followed) => followed.user)
+  followedWebsites: Followed[];
+
+  @OneToMany(() => Watched, (watched) => watched.user)
+  watchedItems: Watched[];
 }
